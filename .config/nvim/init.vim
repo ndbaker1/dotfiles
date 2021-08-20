@@ -5,6 +5,7 @@ set encoding=utf-8
 set hidden
 set incsearch
 set tabpagemax=50
+set shm+=I
 " History
 set noswapfile
 set nobackup
@@ -18,15 +19,21 @@ set smartindent
 " Startup 
 set exrc
 " Visuals
-set guicursor=
 set number
 set relativenumber
 set title
 set showcmd
+set nohlsearch
 set textwidth=80
 set whichwrap=bs<>[]
 set scrolloff=8
-set signcolumn=yes
+"set signcolumn=yes
+" Mappings
+nnoremap <C-W>e :Files<CR>
+
+" Terminal Mode things
+tnoremap <C-x><C-c> <C-\><C-N>
+autocmd TermOpen * setlocal nonumber norelativenumber signcolumn=no
 
 " __ Plugins __
 call plug#begin()
