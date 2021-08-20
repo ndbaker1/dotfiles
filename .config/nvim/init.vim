@@ -1,4 +1,34 @@
-" Plugins
+"__ Vim Settings __
+set ttyfast
+set mouse=a
+set encoding=utf-8
+set hidden
+set incsearch
+set tabpagemax=50
+" History
+set noswapfile
+set nobackup
+set undofile
+set undodir=$HOME/.config/nvim/undodir
+" Tabs
+set tabstop=4 softtabstop=4
+set shiftwidth=4
+set expandtab
+set smartindent
+" Startup 
+set exrc
+" Visuals
+set guicursor=
+set number
+set relativenumber
+set title
+set showcmd
+set textwidth=80
+set whichwrap=bs<>[]
+set scrolloff=8
+set signcolumn=yes
+
+" __ Plugins __
 call plug#begin()
 
 Plug 'tpope/vim-fugitive'
@@ -25,24 +55,4 @@ call plug#end()
 :lua require('lualine').setup()
 " Turn on LSP Signature
 :lua require("lsp_signature").setup()
-
-" Vim Settings
-"
-set number
-
-set title
-
-set encoding=utf-8
-
-set showcmd
-
-set mouse=a
-
-set textwidth=80
-
-set whichwrap=bs<>[]
-
-set ttyfast
-
-set tabpagemax=50
 
