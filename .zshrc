@@ -17,11 +17,15 @@ if [ -n "$(command -v exa)" ]; then
 	alias l='exa'
 	alias ls='exa -a'
 	alias ll='exa --long --header --git -a'
+else
+	echo "exa is not installed."
 fi
 # Use Neovim
 if [ -n "$(command -v nvim)" ]; then
 	alias vi='nvim'
 	alias vim='nvim'
+else
+	echo "neovim is not installed."
 fi
 
 # Various curl utilities
