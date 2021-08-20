@@ -8,7 +8,7 @@ bindkey -v
 PATH=$HOME/.cargo/bin:$PATH
 
 # Variables
-CONFIG_DIR="~/.config"
+CONFIG_DIR="$HOME/.config"
 EDITOR="nvim"
 
 ## Aliases
@@ -40,30 +40,21 @@ HISTFILE=~/.zsh_history
 autoload -Uz compinit
 compinit
 
-zstyle ':completion:*' auto-description 'specify: %d'
-zstyle ':completion:*' completer _expand _complete _correct _approximate
-zstyle ':completion:*' format 'Completing %d'
-zstyle ':completion:*' group-name ''
-zstyle ':completion:*' menu select=2
-eval "$(dircolors -b)"
-zstyle ':completion:*:default' list-colors ${(s.:.)LS_COLORS}
-zstyle ':completion:*' list-colors ''
-zstyle ':completion:*' list-prompt %SAt %p: Hit TAB for more, or the character to insert%s
-zstyle ':completion:*' matcher-list '' 'm:{a-z}={A-Z}' 'm:{a-zA-Z}={A-Za-z}' 'r:|[._-]=* r:|=* l:|=*'
-zstyle ':completion:*' menu select=long
-zstyle ':completion:*' select-prompt %SScrolling active: current selection at %p%s
-zstyle ':completion:*' use-compctl false
-zstyle ':completion:*' verbose true
-
-zstyle ':completion:*:*:kill:*:processes' list-colors '=(#b) #([0-9]#)*=0=01;31'
-zstyle ':completion:*:kill:*' command 'ps -u $USER -o pid,%cpu,tty,cputime,cmd'
-
+extension_dir="$HOME/.config/zsh/zsh-syntax-highlighting" 
 # Enable Syntax Highlighting
-# git clone https://github.com/zsh-users/zsh-autosuggestions ~/.config/zsh/zsh-autosuggestions
-source $HOME/.config/zsh/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+[ -d "$extension_dir" ] || git clone --depth 1 https://github.com/zsh-users/zsh-syntax-highlighting.git $extension_dir
+source $extension_dir/zsh-syntax-highlighting.zsh
+
 # Enable Auto Suggestions
-# git clone https://github.com/zsh-users/zsh-syntax-highlighting.git  ~/.config/zsh/zsh-syntax-highlighting
-source $HOME/.config/zsh/zsh-autosuggestions/zsh-autosuggestions.zsh
+extension_dir="$HOME/.config/zsh/zsh-autosuggestions" 
+[ -d "$extension_dir" ] || git clone --depth 1 https://github.com/zsh-users/zsh-autosuggestions $extension_dir
+source $extension_dir/zsh-autosuggestions.zsh
+
+# Enable Auto Completion
+#extension_dir="$HOME/.config/zsh/zsh-autocomplete" 
+#[ -d "$extension_dir" ] || git clone --depth 1 https://github.com/marlonrichert/zsh-autocomplete.git  $extension_dir
+#source $extension_dir/zsh-autocomplete.plugin.zsh
 
 # Enable FZF
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+
