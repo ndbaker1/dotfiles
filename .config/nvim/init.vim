@@ -30,6 +30,7 @@ set scrolloff=8
 "set signcolumn=yes
 " Mappings
 nnoremap <C-W>e :Files<CR>
+nnoremap <C-W>E :Files<CR>
 
 " Terminal Mode things
 tnoremap <C-x><C-c> <C-\><C-N>
