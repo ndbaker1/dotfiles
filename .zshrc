@@ -1,24 +1,35 @@
-# Set up the prompt
-
-autoload -Uz promptinit
-promptinit
-prompt adam1
 
 setopt histignorealldups sharehistory
+
+# Set vi bindings
+bindkey -v
+
+# Update PATH
+PATH=$HOME/.cargo/bin:$PATH
 
 # Variables
 CONFIG_DIR="~/.config"
 EDITOR="nvim"
 
-# Aliases
-alias l='exa'
-alias ls='exa -a'
-alias ll='exa --long --header --git -a'
-alias vi='nvim'
-alias vim='nvim'
+## Aliases
+# Replace ls with exa
+if [ -n "$(command -v exa)" ]; then
+	alias l='exa'
+	alias ls='exa -a'
+	alias ll='exa --long --header --git -a'
+fi
+# Use Neovim
+if [ -n "$(command -v nvim)" ]; then
+	alias vi='nvim'
+	alias vim='nvim'
+fi
 
+# Various curl utilities
 alias weather='curl wttr.in'
 alias parrot='curl parrot.live'
+
+# Starship Prompt
+eval "$(starship init zsh)"
 
 # Keep 1000 lines of history within the shell and save it to ~/.zsh_history:
 HISTSIZE=1000
@@ -46,3 +57,13 @@ zstyle ':completion:*' verbose true
 
 zstyle ':completion:*:*:kill:*:processes' list-colors '=(#b) #([0-9]#)*=0=01;31'
 zstyle ':completion:*:kill:*' command 'ps -u $USER -o pid,%cpu,tty,cputime,cmd'
+
+# Enable Syntax Highlighting
+# git clone https://github.com/zsh-users/zsh-autosuggestions ~/.config/zsh/zsh-autosuggestions
+source $HOME/.config/zsh/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+# Enable Auto Suggestions
+# git clone https://github.com/zsh-users/zsh-syntax-highlighting.git  ~/.config/zsh/zsh-syntax-highlighting
+source $HOME/.config/zsh/zsh-autosuggestions/zsh-autosuggestions.zsh
+
+# Enable FZF
+[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
