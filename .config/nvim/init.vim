@@ -40,21 +40,14 @@ autocmd TermOpen * setlocal nonumber norelativenumber signcolumn=no
 call plug#begin()
 
 Plug 'tpope/vim-fugitive'
-
 Plug 'tpope/vim-rhubarb'
-
 Plug 'cohama/lexima.vim'
-
+Plug 'hoob3rt/lualine.nvim'
 Plug 'junegunn/fzf'
-
 Plug 'junegunn/fzf.vim'
 
 Plug 'neovim/nvim-lspconfig'
-
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
-
-Plug 'hoob3rt/lualine.nvim'
-
 Plug 'ray-x/lsp_signature.nvim'
 
 call plug#end()
