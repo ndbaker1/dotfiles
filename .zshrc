@@ -3,6 +3,8 @@ setopt histignorealldups sharehistory
 
 # Set vi bindings
 bindkey -v
+bindkey "^P" up-line-or-search
+bindkey "^N" down-line-or-search
 
 # Update PATH
 PATH=$HOME/.cargo/bin:$PATH
