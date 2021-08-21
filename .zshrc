@@ -56,11 +56,6 @@ extension_dir="$HOME/.config/zsh/zsh-autosuggestions"
 [ -d "$extension_dir" ] || git clone --depth 1 https://github.com/zsh-users/zsh-autosuggestions $extension_dir
 source $extension_dir/zsh-autosuggestions.zsh
 
-# Enable Auto Completion
-#extension_dir="$HOME/.config/zsh/zsh-autocomplete" 
-#[ -d "$extension_dir" ] || git clone --depth 1 https://github.com/marlonrichert/zsh-autocomplete.git  $extension_dir
-#source $extension_dir/zsh-autocomplete.plugin.zsh
-
 # Enable FZF
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
