@@ -9,7 +9,7 @@ bindkey "^P" up-line-or-search
 bindkey "^N" down-line-or-search
 
 # Update PATH
-PATH=$HOME/.cargo/bin:$PATH
+PATH=$HOME/.cargo/bin:$HOME/.local/bin:$PATH
 
 # Variables
 CONFIG_DIR="$HOME/.config"
