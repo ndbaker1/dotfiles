@@ -28,10 +28,13 @@ set textwidth=80
 set whichwrap=bs<>[]
 set scrolloff=8
 "set signcolumn=yes
-" Mappings
+""" Mappings
+" FZF
 nnoremap <C-W>e :Files<CR>
 nnoremap <C-W><C-e> :Files<CR>
-
+" RIDER
+nnoremap <C-W>r :RnvimrToggle<CR>
+nnoremap <C-W><C-r> :RnvimrToggle<CR>
 " Terminal Mode things
 tnoremap <C-x><C-c> <C-\><C-N>
 autocmd TermOpen * setlocal nonumber norelativenumber signcolumn=no
@@ -45,6 +48,8 @@ Plug 'cohama/lexima.vim'
 Plug 'hoob3rt/lualine.nvim'
 Plug 'junegunn/fzf'
 Plug 'junegunn/fzf.vim'
+
+Plug 'kevinhwang91/rnvimr'
 
 Plug 'neovim/nvim-lspconfig'
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
