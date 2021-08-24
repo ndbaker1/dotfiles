@@ -18,9 +18,9 @@ EDITOR="nvim"
 ## Aliases
 # Replace ls with exa
 if [ -n "$(command -v exa)" ]; then
-	alias l='exa'
-	alias ls='exa -a'
-	alias ll='exa --long --header --git -a'
+	alias l='exa --group-directories-first'
+	alias ls='l -a --icons'
+	alias ll='ls --long --header --git'
 else
 	echo "exa is not installed."
 fi
