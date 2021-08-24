@@ -1,3 +1,5 @@
+# Load prompt
+[ -n "$(command -v neofetch)" ] && neofetch || echo "neofetch not installed."
 
 setopt histignorealldups sharehistory
 
