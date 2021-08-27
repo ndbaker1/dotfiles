@@ -7,6 +7,8 @@ setopt histignorealldups sharehistory
 bindkey -v
 bindkey "^P" up-line-or-search
 bindkey "^N" down-line-or-search
+bindkey '^[[1;5C' emacs-forward-word
+bindkey '^[[1;5D' emacs-backward-word
 
 # Update PATH
 PATH=$HOME/.cargo/bin:$HOME/.local/bin:$PATH
