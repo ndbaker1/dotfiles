@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/bin/env sh
 
 REPO_URL="https://github.com/ndbaker1/conf.git"
 
