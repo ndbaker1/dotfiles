@@ -6,21 +6,29 @@ set hidden
 set incsearch
 set tabpagemax=50
 set shm+=I
-" History
+
+" HISTORY
 set noswapfile
 set nobackup
 set undofile
 set undodir=$HOME/.config/nvim/undodir
-" Tabs
-set tabstop=4 softtabstop=4
-set shiftwidth=4
+
+" SPACING
+set tabstop=2 softtabstop=2 shiftwidth=2
 set expandtab
 set smartindent
-" Startup 
+" CURSORLINES
+set cursorline
+set clipboard+=unnamedplus
+" STYLING FOR CURSORLINE
+highlight CursorLine ctermbg=Black cterm=NONE
+highlight CursorLineNr ctermbg=Black cterm=bold ctermfg=Green
+
+" STARTUP 
 set exrc
-" Visuals
-set number
-set relativenumber
+
+" EDITING
+set number relativenumber
 set title
 set showcmd
 set nohlsearch
@@ -28,6 +36,7 @@ set textwidth=80
 set whichwrap=bs<>[]
 set scrolloff=8
 "set signcolumn=yes
+
 """ Mappings
 " FZF
 nnoremap <C-W>e :Files<CR>
