@@ -31,5 +31,4 @@ sh -c 'curl -fLo "${XDG_DATA_HOME:-$HOME/.local/share}"/nvim/site/autoload/plug.
 
 youtube-dl - install pip version
 
-## Themes
-- https://github.com/pineapplegiant/spaceduck
+tmux config - https://github.com/gpakosz/.tmux
