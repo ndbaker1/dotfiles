@@ -1,10 +1,3 @@
-# enter tmux
-if [ -n "$(command -v tmux)" ]; then
-  [ "$TMUX" = "" ] && ( tmux a || tmux )
-else
-  return
-fi
-
 # Load prompt
 [ -n "$(command -v neofetch)" ] && neofetch || echo "neofetch not installed."
 
