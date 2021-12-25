@@ -1,0 +1,5 @@
+[user]
+	email = ndbaker1@outlook.com
+	name = Nick Baker
+[core]
+	editor = nvim
