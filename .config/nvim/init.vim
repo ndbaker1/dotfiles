@@ -39,8 +39,8 @@ set scrolloff=8
 
 """ Mappings
 " FZF
-nnoremap <C-W>e :Files<CR>
-nnoremap <C-W><C-e> :Files<CR>
+nnoremap <C-W>e :GFiles<CR>
+nnoremap <C-W><C-e> :GFiles<CR>
 " RIDER
 nnoremap <C-W>r :RnvimrToggle<CR>
 nnoremap <C-W><C-r> :RnvimrToggle<CR>
