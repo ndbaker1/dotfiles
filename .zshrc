@@ -1,6 +1,3 @@
-# Load prompt
-[ -n "$(command -v neofetch)" ] && neofetch || echo "neofetch not installed."
-
 setopt histignorealldups sharehistory
 
 # Set vi bindings
@@ -63,4 +60,7 @@ source $extension_dir/zsh-autosuggestions.zsh
 
 # Enable FZF
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+
+# add dotfiles to the startup
+[ -f $HOME/register_dotfiles.sh ] && source $HOME/register_dotfiles.sh
 

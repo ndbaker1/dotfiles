@@ -7,5 +7,5 @@ alias dotfiles="git --git-dir=$HOME/.dotfiles.git/ --work-tree=$HOME"
 
 dotfiles checkout && \
 dotfiles config --local status.showUntrackedFiles no && \
-echo "alias set."
+echo "registered alias 'dotfiles'"
 
