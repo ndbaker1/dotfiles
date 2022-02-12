@@ -6,21 +6,15 @@ sh -c "$(curl -fsSL https://raw.githubusercontent.com/ndbaker1/conf/main/registe
 
 ## Shell
 - zsh
-- dash
+- fish
 
 ## Binaries
 starship - https://github.com/starship/starship
-```sh
-sh -c "$(curl -fsSL https://starship.rs/install.sh)"
-```
+ * install through cargo
 
 exa - https://github.com/ogham/exa
+ * install through cargo
 
-fzf - https://github.com/junegunn/fzf
-```sh
-git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf
-~/.fzf/install
-```
 neovim - https://github.com/neovim/neovim
 
 vim-plug - https://github.com/junegunn/vim-plug
@@ -32,3 +26,4 @@ sh -c 'curl -fLo "${XDG_DATA_HOME:-$HOME/.local/share}"/nvim/site/autoload/plug.
 youtube-dl - install pip version
 
 tmux config - https://github.com/gpakosz/.tmux
+
