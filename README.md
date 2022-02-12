@@ -1,7 +1,7 @@
 # Config & Dotfiles
 
 ```sh
-sh -c "$(curl -fsSL https://raw.githubusercontent.com/ndbaker1/conf/main/register_dotfiles.sh)"
+sh -c "$(curl -fsSL https://raw.githubusercontent.com/ndbaker1/conf/main/dotfiles)"
 ```
 
 ## Shell
