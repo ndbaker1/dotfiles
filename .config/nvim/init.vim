@@ -63,7 +63,6 @@ autocmd BufWritePre *.rs lua vim.lsp.buf.formatting_sync(nil, 200)
 call plug#begin()
 
 Plug 'hoob3rt/lualine.nvim'
-Plug 'justinmk/vim-sneak'
 
 " Fuzzy finder
 Plug 'airblade/vim-rooter'
@@ -82,7 +81,6 @@ Plug 'ray-x/lsp_signature.nvim'
 " Only because nvim-cmp _requires_ snippets
 Plug 'hrsh7th/cmp-vsnip', {'branch': 'main'}
 Plug 'hrsh7th/vim-vsnip'
-
 
 " To enable more of the features of rust-analyzer, such as inlay hints and more!
 Plug 'cespare/vim-toml'
