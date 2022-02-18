@@ -86,13 +86,13 @@ Plug 'hrsh7th/vim-vsnip'
 Plug 'cespare/vim-toml'
 Plug 'stephpy/vim-yaml'
 Plug 'rust-lang/rust.vim'
+Plug 'simrat39/rust-tools.nvim'
+
 
 call plug#end()
 
 " Turn on Default LuaLine
 :lua require('lualine').setup()
-" Turn on LSP Signature
-:lua require("lsp_signature").setup()
 
 " Set completeopt to have a better completion experience
 " :help completeopt
@@ -123,6 +123,18 @@ lua << EOF
         },
       },
     }
+  }
+
+  require'rust-tools'.setup {
+    tools = { -- rust-tools options
+        autoSetHints = true,
+        hover_with_actions = true,
+        inlay_hints = {
+            show_parameter_hints = false,
+            parameter_hints_prefix = "",
+            other_hints_prefix = "",
+        },
+    },
   }
 
   local cmp = require'cmp'
