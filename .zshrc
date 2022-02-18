@@ -37,7 +37,7 @@ alias weather='curl wttr.in'
 alias parrot='curl parrot.live'
 
 # Starship Prompt
-eval "$(starship init zsh)"
+#eval "$(starship init zsh)"
 
 # Keep 1000 lines of history within the shell and save it to ~/.zsh_history:
 HISTSIZE=1000
