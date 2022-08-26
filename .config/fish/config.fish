@@ -10,7 +10,7 @@ if status is-interactive
   abbr -a vim nvim
   abbr -a g git
 
-  if command -v exa > /dev/null
+  if command -v exa &> /dev/null
     abbr -a l 'exa'
     abbr -a ls 'exa -lg'
     abbr -a ll 'exa -lag'
@@ -20,7 +20,14 @@ if status is-interactive
     abbr -a lll 'ls -la'
   end
 
-  if command -v git > /dev/null
+  if command -v git &> /dev/null
     abbr -a gs 'git status'
+  end
+
+  # make some custom mappings to windows executables if we are in a WSL instance
+  if grep -qEi "(Microsoft|WSL)" /proc/version &> /dev/null
+    alias cargo=cargo.exe
+    alias rustup=rustup.exe
+    alias rustc=rustc.exe
   end
 end
