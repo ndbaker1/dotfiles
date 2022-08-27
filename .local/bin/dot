@@ -23,9 +23,11 @@ if ! [ -d $DOTFILES_GIT_DIR ] ; then
       read -p "failed to checkout. reset head [git reset --hard] (y/n)? " CONT
       [ "$CONT" = "y" ] && git $DOTFILES_GIT_ARGS reset --hard
     fi
+
+    echo Done.
+    echo Use the 'dot' command to acceses the dotfiles git cli
   fi
 
-  echo -e "done.\nuse the 'dot' command to acceses the dotfiles git cli"
 else
   git $DOTFILES_GIT_ARGS $@
 fi
