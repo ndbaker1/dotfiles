@@ -2,7 +2,7 @@
 
 ## Install
 ```sh
-curl -fsSL https://raw.githubusercontent.com/ndbaker1/conf/main/.local/bin/dotfiles | sh
+curl -fsSL https://raw.githubusercontent.com/ndbaker1/conf/main/.local/bin/dot | sh
 ```
 
 ## Commons
