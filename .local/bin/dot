@@ -26,7 +26,8 @@ if ! [ -d $DOTFILES_GIT_DIR ] ; then
   fi
 
   echo -e "done.\nuse the 'dot' command to acceses the dotfiles git cli"
+else
+  git $DOTFILES_GIT_ARGS $@
 fi
 
-git $DOTFILES_GIT_ARGS $@
 
