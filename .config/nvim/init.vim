@@ -45,9 +45,9 @@ nnoremap <leader>q :q<CR>
 nnoremap <leader>w :w<CR>
 
 " fuzzy searches
-nnoremap <leader>u :GFiles<CR>
-nnoremap <leader>o :Files<CR>
-nnoremap <leader>s :Rg<CR>
+nnoremap <leader>g :GFiles<CR>
+nnoremap <leader>s :Files<CR>
+"nnoremap <leader>f :Rg<CR>
 
 " buffer switching
 nnoremap <leader><leader> <c-^>

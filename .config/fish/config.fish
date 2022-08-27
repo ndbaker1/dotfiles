@@ -26,8 +26,8 @@ if status is-interactive
 
   # make some custom mappings to windows executables if we are in a WSL instance
   if grep -qEi "(Microsoft|WSL)" /proc/version &> /dev/null
-    alias cargo=cargo.exe
-    alias rustup=rustup.exe
-    alias rustc=rustc.exe
+    for cmd in cargo rustup rustc rg
+      alias $cmd=$cmd.exe
+    end
   end
 end
