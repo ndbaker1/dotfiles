@@ -9,7 +9,7 @@ DOTFILES_GIT_ARGS="--git-dir=$HOME/.dotfiles.git/ --work-tree=$HOME"
 if ! [ -d $DOTFILES_GIT_DIR ] ; then
 
   read -p "pull dotfiles from $REPO_URL (y/n)? " CONT
-  if ["$CONT" = "y" ] ; then 
+  if [ "$CONT" = "y" ] ; then 
     # clone the bare repo and use the home directory as the worktree
     git clone --bare $REPO_URL $DOTFILES_GIT_DIR
 
