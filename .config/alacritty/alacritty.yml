@@ -1,15 +1,15 @@
-#  Windows
-shell:
-  program: "C:\\Windows\\System32\\wsl.exe"
-
-font:
-  normal:
-    family: FiraCode Nerd Font
-    style: Regular
-
-  bold:
-    family: FiraCode Nerd Font
-    style: Bold
+## Windows
+#shell:
+#  program: "C:\\Windows\\System32\\wsl.exe"
+#
+#font:
+#  normal:
+#    family: FiraCode Nerd Font
+#    style: Regular
+#
+#  bold:
+#    family: FiraCode Nerd Font
+#    style: Bold
 
 # bright color variants
 draw_bold_text_with_bright_colors: true
