@@ -1,6 +1,6 @@
 #!/usr/bin/env sh
 
-REPO_URL="git@github.com:ndbaker1/conf.git"
+REPO_URL="https://github.com/ndbaker1/conf.git"
 
 DOTFILES_GIT_DIR="$HOME/.dotfiles.git"
 DOTFILES_GIT_ARGS="--git-dir=$HOME/.dotfiles.git/ --work-tree=$HOME"
