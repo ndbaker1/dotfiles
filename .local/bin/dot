@@ -1,13 +1,14 @@
 #!/usr/bin/env sh
 
-REPO_URL="https://github.com/ndbaker1/conf"
-
+REPO_URL="https://github.com/ndbaker1/dotfiles"
 DOTFILES_GIT_DIR="$HOME/.dotfiles.git"
-DOTFILES_GIT_ARGS="--git-dir=$HOME/.dotfiles.git/ --work-tree=$HOME"
+
+function dotfiles {
+  git --git-dir=$HOME/.dotfiles.git/ --work-tree=$HOME $@
+}
 
 # if not installed then prompt for install
 if ! [ -d $DOTFILES_GIT_DIR ] ; then
-
   read -p "pull dotfiles from $REPO_URL (y/n)? " CONT
   if [ "$CONT" = "y" ] ; then 
     # clone the bare repo and use the home directory as the worktree
@@ -15,21 +16,20 @@ if ! [ -d $DOTFILES_GIT_DIR ] ; then
 
     # dont show untracked files,
     # let the user add files to the dotfiles selectively without being bothered
-    git $DOTFILES_GIT_ARGS config --local status.showUntrackedFiles no && \
+    dotfiles config --local status.showUntrackedFiles no
     
     # if the checkout failed, then try to reset the repo to the head pointer
     # as a correctness fallback
-    if ! git $DOTFILES_GIT_ARGS checkout ; then
+    if ! dotfiles checkout ; then
       read -p "failed to checkout. reset head [git reset --hard] (y/n)? " CONT
-      [ "$CONT" = "y" ] && git $DOTFILES_GIT_ARGS reset --hard
+      [ "$CONT" = "y" ] && dotfiles reset --hard
     fi
 
     echo Done.
-    echo Use the \"dot\" command to acces the dotfiles git cli
+    echo Use \"$0\" to invoke \"git\" from the dotfiles context.
   fi
-
 else
-  git $DOTFILES_GIT_ARGS $@
+  dotfiles $@
 fi
 
 
