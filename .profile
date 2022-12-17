@@ -12,10 +12,9 @@ if [ -d "$HOME/.local/bin" ] ; then
     PATH="$HOME/.local/bin:$PATH"
 fi
 
-# Cargo PATH
-if [ -d "$HOME/.cargo" ] ; then
+# Cargo 
+if [ -f "$HOME/.cargo/env" ] ; then
   . "$HOME/.cargo/env"
-  PATH="$HOME/.cargo/bin:$PATH"
 fi
 
 # start fish as the interactive shell if it exists
