@@ -13,7 +13,8 @@ if [ -d "$HOME/.local/bin" ] ; then
 fi
 
 # Cargo PATH
-if [ -d "$HOME/.cargo/bin" ] ; then
+if [ -d "$HOME/.cargo" ] ; then
+  . "$HOME/.cargo/env"
   PATH="$HOME/.cargo/bin:$PATH"
 fi
 

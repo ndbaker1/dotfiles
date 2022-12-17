@@ -20,14 +20,13 @@ if status is-interactive
     abbr -a lll 'ls -la'
   end
 
-  if command -v git &> /dev/null
-    abbr -a gs 'git status'
-  end
-
   # make some custom mappings to windows executables if we are in a WSL instance
   if grep -qEi "(Microsoft|WSL)" /proc/version &> /dev/null
-    for cmd in cargo rustup rustc rg
-      alias $cmd=$cmd.exe
+    for cmd in (ls /mnt/c/Users/SpicyRamenChef/.cargo/bin)
+      set cmd_pre (string sub -e -4 $cmd)
+      if not command -v $cmd_pre &> /dev/null
+        abbr -a $cmd_pre $cmd
+      end
     end
   end
 end

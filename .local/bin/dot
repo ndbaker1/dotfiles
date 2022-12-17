@@ -3,7 +3,7 @@
 REPO_URL="https://github.com/ndbaker1/dotfiles"
 DOTFILES_GIT_DIR="$HOME/.dotfiles.git"
 
-function dotfiles {
+dotfiles() {
   git --git-dir=$HOME/.dotfiles.git/ --work-tree=$HOME $@
 }
 
