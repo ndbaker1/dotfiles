@@ -1,5 +1,5 @@
 # environment defaults
-export TERM=alacritty
+# export TERM=alacritty # only if alacritty exists on the machine
 export EDITOR=nvim
 
 # set PATH so it includes user's private bin if it exists

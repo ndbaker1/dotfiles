@@ -1,15 +1,19 @@
 if status is-interactive
 
-  starship init fish | source
+  if command -v starship &> /dev/null # use starship if it exists
+    starship init fish | source
+  end
 
-  fish_vi_key_bindings
+  fish_vi_key_bindings # extra vim bindings
 
+  # nice abbreviations
   abbr -a t tmux
   abbr -a c cargo
   abbr -a vi nvim
   abbr -a vim nvim
   abbr -a g git
 
+  # use exa over ls, with nice shortcuts
   if command -v exa &> /dev/null
     abbr -a l 'exa'
     abbr -a ls 'exa -lg'
