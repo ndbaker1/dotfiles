@@ -25,7 +25,7 @@ vim.o.completeopt = 'menuone,noselect,noinsert,preview'
 vim.o.swapfile = false
 vim.o.backup = false
 vim.o.undofile = true
-vim.o.undodir = '$HOME/.config/nvim/undodir'
+vim.o.undodir = vim.fn.expand('~/.config/nvim/undodir')
 
 -- [[ Keymaps ]]
 vim.g.mapleader = ' '
