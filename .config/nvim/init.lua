@@ -208,6 +208,30 @@ local on_attach = function(_, bufnr)
   vim.cmd("autocmd BufWritePost * lua vim.lsp.buf.format()")
 end
 
+
+-- Setup mason so it can manage external tooling
+require('mason').setup()
+
+local lsp_servers = { 'sumneko_lua' }
+-- Ensure the servers above are installed
+require('mason-lspconfig').setup {
+  -- add language servers that arent managed by mason
+  ensure_installed = { 'rust_analyzer', unpack(lsp_servers) }
+}
+
+-- nvim-cmp supports additional completion capabilities
+local capabilities = vim.lsp.protocol.make_client_capabilities()
+capabilities = require('cmp_nvim_lsp').default_capabilities(capabilities)
+
+-- Default LSP Setup
+for _, lsp in ipairs(lsp_servers) do
+  require('lspconfig')[lsp].setup {
+    on_attach = on_attach,
+    capabilities = capabilities,
+  }
+end
+
+-- specific Rust-Tools Setup for inlay-hints
 -- Inlay hints setup
 require("inlay-hints").setup()
 local ih = require("inlay-hints")
@@ -228,27 +252,6 @@ require("rust-tools").setup {
     end,
   },
 }
-
--- Setup mason so it can manage external tooling
-require('mason').setup()
-
-local lsp_servers = { 'sumneko_lua' }
--- Ensure the servers above are installed
-require('mason-lspconfig').setup {
-  ensure_installed = lsp_servers
-}
-
--- nvim-cmp supports additional completion capabilities
-local capabilities = vim.lsp.protocol.make_client_capabilities()
-capabilities = require('cmp_nvim_lsp').default_capabilities(capabilities)
-
--- Default LSP Setup
-for _, lsp in ipairs(lsp_servers) do
-  require('lspconfig')[lsp].setup {
-    on_attach = on_attach,
-    capabilities = capabilities,
-  }
-end
 
 -- Turn on lsp status information
 require('fidget').setup()
