@@ -37,9 +37,9 @@ vim.keymap.set('n', '<leader>w', ':w<CR>')
 
 -- buffer switching
 vim.keymap.set('n', '<leader><leader>', '<c-^>')
-vim.keymap.set('n', '<leader>;', ':Buffers<CR>')
 
 -- terminal mode things
+-- escape the terminal using <Ctrl-x + Ctrl-c>
 vim.keymap.set('t', '<C-x><C-c>', '<C-\\><C-N>')
 
 -- [[ Install Lazy ]]

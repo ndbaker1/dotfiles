@@ -1,10 +1,18 @@
 if status is-interactive
 
-  if command -v starship &> /dev/null # use starship if it exists
+  # use zoxide if it exists
+  if command -v zoxide &> /dev/null 
+    zoxide init fish | source
+    abbr -a cd z
+  end
+
+  # use starship if it exists
+  if command -v starship &> /dev/null 
     starship init fish | source
   end
 
-  fish_vi_key_bindings # extra vim bindings
+  # extra vim bindings
+  fish_vi_key_bindings
 
   # nice abbreviations
   abbr -a t tmux
@@ -13,24 +21,15 @@ if status is-interactive
   abbr -a vim nvim
   abbr -a g git
 
-  # use exa over ls, with nice shortcuts
+  # use exa over ls with nice shortcuts
   if command -v exa &> /dev/null
     abbr -a l 'exa'
     abbr -a ls 'exa -lg'
     abbr -a ll 'exa -lag'
   else
     abbr -a l 'ls'
-    abbr -a ll 'ls -l'
-    abbr -a lll 'ls -la'
+    abbr -a ls 'ls -l'
+    abbr -a ll 'ls -la'
   end
 
-  # make some custom mappings to windows executables if we are in a WSL instance
-  if grep -qEi "(Microsoft|WSL)" /proc/version &> /dev/null
-    for cmd in (ls /mnt/c/Users/SpicyRamenChef/.cargo/bin)
-      set cmd_pre (string sub -e -4 $cmd)
-      if not command -v $cmd_pre &> /dev/null
-        abbr -a $cmd_pre $cmd
-      end
-    end
-  end
 end
