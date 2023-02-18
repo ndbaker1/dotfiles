@@ -113,7 +113,7 @@ require('lualine').setup {
 -- See `:help nvim-treesitter`
 require('nvim-treesitter.configs').setup {
     -- Add languages to be installed here that you want installed for treesitter
-    ensure_installed = { 'c', 'cpp', 'go', 'lua', 'python', 'rust', 'typescript', 'toml', 'help' },
+    ensure_installed = { 'c', 'cpp', 'go', 'lua', 'python', 'rust', 'typescript', 'toml', 'help', 'json' },
 
     highlight = { enable = true },
     indent = { enable = true },
@@ -164,6 +164,9 @@ local on_attach = function(_, bufnr)
 
         vim.keymap.set('n', keys, func, { buffer = bufnr, desc = desc })
     end
+
+    -- vscode-like LSP renaming interface
+    nmap('<F2>', vim.lsp.buf.rename, '[R]e[n]ame')
 
     nmap('<leader>rn', vim.lsp.buf.rename, '[R]e[n]ame')
     nmap('<leader>ca', vim.lsp.buf.code_action, '[C]ode [A]ction')
