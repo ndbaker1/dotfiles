@@ -30,13 +30,9 @@ vim.o.undodir = vim.fn.expand('~/.config/nvim/undodir')
 -- [[ Keymaps ]]
 vim.g.mapleader = ' '
 vim.g.maplocalleader = ' '
-
--- quick save & exit
-vim.keymap.set('n', '<leader>q', ':q<CR>')
-vim.keymap.set('n', '<leader>w', ':w<CR>')
-
--- buffer switching
-vim.keymap.set('n', '<leader><leader>', '<c-^>')
+vim.keymap.set('n', '<leader>q', ':q<CR>', { desc = "quit" })
+vim.keymap.set('n', '<leader>w', ':w<CR>', { desc = "write file" })
+vim.keymap.set('n', '<leader><leader>', '<c-^>', { desc = "switch to last buffer" })
 
 -- terminal mode things
 -- escape the terminal using <Ctrl-x + Ctrl-c>
@@ -59,6 +55,15 @@ vim.opt.rtp:prepend(lazypath)
 require('lazy').setup({
     -- colorscheme
     'ellisonleao/gruvbox.nvim',
+
+    {
+        "folke/which-key.nvim",
+        config = function()
+            vim.o.timeout = true
+            vim.o.timeoutlen = 300
+            require("which-key").setup {}
+        end,
+    },
 
     { -- LSP Configuration & Plugins
         'neovim/nvim-lspconfig',
