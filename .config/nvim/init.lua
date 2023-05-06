@@ -53,9 +53,9 @@ end
 vim.opt.rtp:prepend(lazypath)
 
 require('lazy').setup({
-    -- colorscheme
-    'ellisonleao/gruvbox.nvim',
+    'ellisonleao/gruvbox.nvim', -- colorscheme
 
+    -- Display Keymappings
     {
         "folke/which-key.nvim",
         config = function()
@@ -65,7 +65,9 @@ require('lazy').setup({
         end,
     },
 
-    { -- LSP Configuration & Plugins
+
+    -- LSP Configuration & Plugins
+    {
         'neovim/nvim-lspconfig',
         dependencies = {
             -- Automatically install LSPs to stdpath for neovim
@@ -82,12 +84,14 @@ require('lazy').setup({
         },
     },
 
-    { -- Autocompletion
+    -- Autocompletion
+    {
         'hrsh7th/nvim-cmp',
         dependencies = { 'hrsh7th/cmp-nvim-lsp', 'L3MON4D3/LuaSnip', 'saadparwaiz1/cmp_luasnip' },
     },
 
-    { -- Highlight, edit, and navigate code
+    -- Highlight, edit, and navigate code
+    {
         'nvim-treesitter/nvim-treesitter',
         run = function()
             pcall(require('nvim-treesitter.install').update { with_sync = true })
@@ -95,13 +99,21 @@ require('lazy').setup({
     },
 
     'nvim-lualine/lualine.nvim', -- Fancier statusline
-    'tpope/vim-sleuth', -- Detect tabstop and shiftwidth automatically
+    'tpope/vim-sleuth',          -- Detect tabstop and shiftwidth automatically
 
     -- Fuzzy Finder (files, lsp, etc)
-    { 'nvim-telescope/telescope.nvim', branch = '0.1.x', dependencies = { 'nvim-lua/plenary.nvim' } },
+    {
+        'nvim-telescope/telescope.nvim',
+        branch = '0.1.x',
+        dependencies = { 'nvim-lua/plenary.nvim' },
+    },
 
     -- Fuzzy Finder Algorithm which dependencies local dependencies to be built. Only load if `make` is available
-    { 'nvim-telescope/telescope-fzf-native.nvim', run = 'make', cond = vim.fn.executable 'make' == 1 },
+    {
+        'nvim-telescope/telescope-fzf-native.nvim',
+        run = 'make',
+        cond = vim.fn.executable 'make' == 1,
+    },
 })
 
 -- Set lualine as statusline
@@ -118,7 +130,7 @@ require('lualine').setup {
 -- See `:help nvim-treesitter`
 require('nvim-treesitter.configs').setup {
     -- Add languages to be installed here that you want installed for treesitter
-    ensure_installed = { 'c', 'cpp', 'go', 'lua', 'python', 'rust', 'typescript', 'toml', 'help', 'json' },
+    ensure_installed = { 'c', 'cpp', 'go', 'lua', 'python', 'rust', 'typescript', 'toml', 'json' },
 
     highlight = { enable = true },
     indent = { enable = true },
@@ -208,7 +220,7 @@ end
 -- Setup mason so it can manage external tooling
 require('mason').setup()
 
-local lsp_servers = { 'sumneko_lua' }
+local lsp_servers = { 'lua_ls' }
 -- Ensure the servers above are installed
 require('mason-lspconfig').setup {
     -- add language servers that arent managed by mason
@@ -302,7 +314,11 @@ cmp.setup {
 -- setup must be called before loading the colorscheme
 -- Default options:
 require("gruvbox").setup({
-    italic = false,
+    italic = {
+        strings = false,
+        operators = false,
+        comments = true,
+    },
     contrast = "hard", -- can be "hard", "soft" or empty string
 })
 vim.cmd.colorscheme("gruvbox")
