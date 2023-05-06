@@ -8,7 +8,7 @@ sh -c "$(curl -fsSL https://raw.githubusercontent.com/ndbaker1/dotfiles/main/.lo
 Cargo installables:
 ```sh
 # shell essentials
-cargo install exa ripgrep bat
+cargo install exa ripgrep bat zoxide
 # dev helpers
 cargo install bacon simple-http-server
 ```
