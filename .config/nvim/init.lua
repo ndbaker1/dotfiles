@@ -309,16 +309,3 @@ cmp.setup {
         { name = 'luasnip' },
     },
 }
-
--- [[ ColorScheme ]]
--- setup must be called before loading the colorscheme
--- Default options:
-require("gruvbox").setup({
-    italic = {
-        strings = false,
-        operators = false,
-        comments = true,
-    },
-    contrast = "hard", -- can be "hard", "soft" or empty string
-})
-vim.cmd.colorscheme("gruvbox")
