@@ -238,6 +238,7 @@ cmp.setup {
         end,
     },
     mapping = cmp.mapping.preset.insert {
+        ['<c-space>'] = cmp.mapping(cmp.mapping.complete(), { 'i', 's' }),
         ['<CR>'] = cmp.mapping.confirm { -- 'Enter' on selected option replaces text
             behavior = cmp.ConfirmBehavior.Replace,
             select = false,
