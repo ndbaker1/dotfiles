@@ -208,7 +208,7 @@ end
 -- Setup mason so it can manage external tooling
 require('mason').setup()
 
-local lsp_servers = { 'rust_analyzer', 'lua_ls' }
+local lsp_servers = { 'rust_analyzer', 'lua_ls', 'pyright' }
 -- Ensure the servers above are installed
 require('mason-lspconfig').setup {
     -- add language servers that arent managed by mason
