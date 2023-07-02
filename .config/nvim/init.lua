@@ -53,6 +53,7 @@ end
 vim.opt.rtp:prepend(lazypath)
 
 require('lazy').setup({
+    -- theme
     { "catppuccin/nvim", name = "catppuccin", priority = 1000 },
 
     -- Display Keymappings
@@ -65,13 +66,15 @@ require('lazy').setup({
         end,
     },
 
-
     -- LSP Configuration & Plugins
     {
         'neovim/nvim-lspconfig',
         dependencies = {
             -- Automatically install LSPs to stdpath for neovim
-            'williamboman/mason.nvim',
+            {
+                "williamboman/mason.nvim",
+                build = ":MasonUpdate", -- :MasonUpdate updates registry contents
+            },
             'williamboman/mason-lspconfig.nvim',
 
             -- Inlay Hints
@@ -117,9 +120,7 @@ require('lazy').setup({
 -- See `:help lualine.txt`
 require('lualine').setup {
     options = {
-        icons_enabled = false,
-        component_separators = '|',
-        section_separators = '::',
+        theme = "catppuccin",
     },
 }
 
@@ -128,18 +129,8 @@ require('lualine').setup {
 require('nvim-treesitter.configs').setup {
     -- Add languages to be installed here that you want installed for treesitter
     ensure_installed = { 'c', 'cpp', 'go', 'lua', 'python', 'rust', 'typescript', 'toml', 'json' },
-
     highlight = { enable = true },
     indent = { enable = true },
-    incremental_selection = {
-        enable = true,
-        keymaps = {
-            init_selection = '<c-space>',
-            node_incremental = '<c-space>',
-            scope_incremental = '<c-s>',
-            node_decremental = '<c-backspace>',
-        },
-    },
 }
 
 -- [[ Configure Telescope ]]
@@ -217,11 +208,11 @@ end
 -- Setup mason so it can manage external tooling
 require('mason').setup()
 
-local lsp_servers = { 'lua_ls' }
+local lsp_servers = { 'rust_analyzer', 'lua_ls' }
 -- Ensure the servers above are installed
 require('mason-lspconfig').setup {
     -- add language servers that arent managed by mason
-    ensure_installed = { 'rust_analyzer', unpack(lsp_servers) }
+    ensure_installed = lsp_servers,
 }
 
 -- nvim-cmp supports additional completion capabilities
@@ -235,28 +226,6 @@ for _, lsp in ipairs(lsp_servers) do
         capabilities = capabilities,
     }
 end
-
--- specific Rust-Tools Setup for inlay-hints
--- Inlay hints setup
-require("inlay-hints").setup()
-local ih = require("inlay-hints")
-
-require("rust-tools").setup {
-    tools = {
-        on_initialized = function()
-            ih.set_all()
-        end,
-        inlay_hints = {
-            auto = false,
-        },
-    },
-    server = {
-        on_attach = function(c, b)
-            on_attach(c, b)
-            ih.on_attach(c, b)
-        end,
-    },
-}
 
 -- nvim-cmp setup
 local cmp = require('cmp')
