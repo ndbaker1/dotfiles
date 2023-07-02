@@ -53,7 +53,7 @@ end
 vim.opt.rtp:prepend(lazypath)
 
 require('lazy').setup({
-    'ellisonleao/gruvbox.nvim', -- colorscheme
+    { "catppuccin/nvim", name = "catppuccin", priority = 1000 },
 
     -- Display Keymappings
     {
@@ -73,9 +73,6 @@ require('lazy').setup({
             -- Automatically install LSPs to stdpath for neovim
             'williamboman/mason.nvim',
             'williamboman/mason-lspconfig.nvim',
-
-            -- Useful status updates for LSP
-            'j-hui/fidget.nvim',
 
             -- Inlay Hints
             'simrat39/inlay-hints.nvim',
@@ -261,9 +258,6 @@ require("rust-tools").setup {
     },
 }
 
--- Turn on lsp status information
-require('fidget').setup()
-
 -- nvim-cmp setup
 local cmp = require('cmp')
 local luasnip = require('luasnip')
@@ -309,3 +303,7 @@ cmp.setup {
         { name = 'luasnip' },
     },
 }
+
+
+require("catppuccin").setup({ transparent_background = true })
+vim.cmd.colorscheme("catppuccin")
