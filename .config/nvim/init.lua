@@ -1,27 +1,28 @@
--- [[ Editor settings ]]
+-- [[ Editor ]]
+vim.o.number = true
+vim.o.relativenumber = true
 vim.o.ttyfast = true
 vim.o.mouse = 'a'
 vim.o.encoding = 'utf-8'
 vim.o.hidden = true
 vim.o.incsearch = true
-vim.o.tabpagemax = 50
-vim.o.tabstop = 4
-vim.o.softtabstop = 4
-vim.o.shiftwidth = 4
-vim.o.expandtab = true
-vim.o.smartindent = true
-vim.o.cursorline = true
-vim.o.number = true
-vim.o.relativenumber = true
 vim.o.title = true
 vim.o.showcmd = true
 vim.o.hlsearch = false
-vim.o.textwidth = 80
-vim.o.whichwrap = 'bs<>[]'
 vim.o.scrolloff = 8
 vim.o.completeopt = 'menuone,noselect,noinsert,preview'
 
--- [[ History config ]]
+-- [[ Formatting ]]
+vim.o.tabstop = 4
+vim.o.softtabstop = 4
+vim.o.shiftwidth = 4
+vim.o.tabpagemax = 50
+vim.o.expandtab = true
+vim.o.smartindent = true
+vim.o.textwidth = 80
+vim.o.whichwrap = 'bs<>[]'
+
+-- [[ History ]]
 vim.o.swapfile = false
 vim.o.backup = false
 vim.o.undofile = true
@@ -33,9 +34,7 @@ vim.g.maplocalleader = ' '
 vim.keymap.set('n', '<leader>q', ':q<CR>', { desc = "quit" })
 vim.keymap.set('n', '<leader>w', ':w<CR>', { desc = "write file" })
 vim.keymap.set('n', '<leader><leader>', '<c-^>', { desc = "switch to last buffer" })
-
--- terminal mode things
--- escape the terminal using <Ctrl-x + Ctrl-c>
+-- terminal mode thing. escape the terminal using <Ctrl-x + Ctrl-c>
 vim.keymap.set('t', '<C-x><C-c>', '<C-\\><C-N>')
 
 -- [[ Install Lazy ]]
@@ -206,7 +205,7 @@ local on_attach = function(_, bufnr)
 end
 
 
--- Setup mason so it can manage external tooling
+-- [[ Mason ]]
 require('mason').setup()
 
 local lsp_servers = { 'rust_analyzer', 'lua_ls', 'pyright' }
@@ -220,7 +219,7 @@ require('mason-lspconfig').setup {
 local capabilities = vim.lsp.protocol.make_client_capabilities()
 capabilities = require('cmp_nvim_lsp').default_capabilities(capabilities)
 
--- Default LSP Setup
+-- [[ LSPConfig ]]
 for _, lsp in ipairs(lsp_servers) do
     require('lspconfig')[lsp].setup {
         on_attach = on_attach,
@@ -228,7 +227,7 @@ for _, lsp in ipairs(lsp_servers) do
     }
 end
 
--- nvim-cmp setup
+-- [[ Completion ]]
 local cmp = require('cmp')
 local luasnip = require('luasnip')
 
@@ -275,6 +274,6 @@ cmp.setup {
     },
 }
 
-
+-- [[ Themeing ]]
 require("catppuccin").setup({ transparent_background = true })
 vim.cmd.colorscheme("catppuccin")
