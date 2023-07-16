@@ -3,9 +3,9 @@
 export EDITOR=nvim
 
 # include user's private bin
-PATH="$HOME/bin:$PATH"
+export PATH="$HOME/bin:$PATH"
 # include user's private local bin
-PATH="$HOME/.local/bin:$PATH"
+export PATH="$HOME/.local/bin:$PATH"
 
 # Cargo 
 if [ -f "$HOME/.cargo/env" ]; then
