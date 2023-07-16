@@ -2,10 +2,8 @@
 # export TERM=alacritty # only if alacritty exists on the machine
 export EDITOR=nvim
 
-# include user's private bin
-export PATH="$HOME/bin:$PATH"
-# include user's private local bin
-export PATH="$HOME/.local/bin:$PATH"
+# include user's private bin and local bin
+export PATH="$HOME/bin:$HOME/.local/bin:$PATH"
 
 # Cargo 
 if [ -f "$HOME/.cargo/env" ]; then
