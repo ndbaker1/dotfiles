@@ -26,6 +26,7 @@ if status is-interactive
     abbr -a l 'exa'
     abbr -a ls 'exa -lg'
     abbr -a ll 'exa -lag'
+    abbr -a lll 'exa -lag --tree'
   else
     abbr -a l 'ls'
     abbr -a ls 'ls -l'
