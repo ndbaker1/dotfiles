@@ -15,11 +15,18 @@ if status is-interactive
   fish_vi_key_bindings
 
   # nice abbreviations
-  abbr -a t tmux
-  abbr -a c cargo
-  abbr -a vi nvim
-  abbr -a vim nvim
-  abbr -a g git
+  abbr -a g 'git'
+
+  if command -v tmux &> /dev/null
+    abbr -a t 'tmux'
+  end
+  if command -v cargo &> /dev/null
+    abbr -a c 'cargo'
+  end
+  if command -v nvim &> /dev/null
+    abbr -a vi 'nvim'
+    abbr -a vim 'nvim'
+  end
 
   # use exa over ls with nice shortcuts
   if command -v exa &> /dev/null
