@@ -51,117 +51,132 @@ if not vim.loop.fs_stat(lazypath) then
 end
 vim.opt.rtp:prepend(lazypath)
 
-require('lazy').setup({
-    -- Detect tabstop and shiftwidth automatically
-    'tpope/vim-sleuth',
-
-    -- Display Keymappings
+require('lazy').setup(
+-- Plugins
     {
-        'folke/which-key.nvim',
-        config = function()
-            vim.o.timeout = true
-            vim.o.timeoutlen = 300
-            require('which-key').setup()
-        end,
-    },
+        -- Detect tabstop and shiftwidth automatically
+        'tpope/vim-sleuth',
 
-    -- LSP Configuration & Plugins
-    {
-        'neovim/nvim-lspconfig',
-        dependencies = {
-            { 'williamboman/mason.nvim', build = ':MasonUpdate' },
-            'williamboman/mason-lspconfig.nvim',
-
-            'simrat39/inlay-hints.nvim', -- Inlay Hints
-            'simrat39/rust-tools.nvim',  -- Rust Inlay Hints
+        -- Display Keymappings
+        {
+            'folke/which-key.nvim',
+            config = function()
+                vim.o.timeout = true
+                vim.o.timeoutlen = 300
+                require('which-key').setup()
+            end,
         },
-    },
 
-    -- Autocompletion
-    {
-        'hrsh7th/nvim-cmp',
-        dependencies = {
-            'hrsh7th/cmp-nvim-lsp',
-            'L3MON4D3/LuaSnip',
-            'saadparwaiz1/cmp_luasnip',
-            { 'windwp/nvim-autopairs', config = function() require("nvim-autopairs").setup() end },
+        -- LSP Configuration & Plugins
+        {
+            'neovim/nvim-lspconfig',
+            dependencies = {
+                { 'williamboman/mason.nvim', build = ':MasonUpdate' },
+                'williamboman/mason-lspconfig.nvim',
+
+                'simrat39/inlay-hints.nvim', -- Inlay Hints
+                'simrat39/rust-tools.nvim',  -- Rust Inlay Hints
+            },
         },
-    },
 
-    -- Fancier, non-blocking notifications
-    {
-        'folke/noice.nvim',
-        event = 'VeryLazy',
-        dependencies = {
-            'MunifTanjim/nui.nvim',
+        -- Autocompletion
+        {
+            'hrsh7th/nvim-cmp',
+            dependencies = {
+                'hrsh7th/cmp-nvim-lsp',
+                'L3MON4D3/LuaSnip',
+                'saadparwaiz1/cmp_luasnip',
+                { 'windwp/nvim-autopairs', config = function() require("nvim-autopairs").setup() end },
+            },
+        },
+
+        -- Fancier, non-blocking notifications
+        {
             'rcarriga/nvim-notify',
-        },
-        config = function()
-            -- some settings for notify
-            require('notify').setup({
-                background_colour = '#000000', -- satisfy warning
-                stages = 'fade',
-            })
-            local telescope_notify = require('telescope').extensions.notify.notify
-            vim.keymap.set('n', '<leader>sn', telescope_notify, { desc = '[S]earch [N]otifications' })
+            dependencies = { 'mrded/nvim-lsp-notify' },
+            config = function()
+                require('notify').setup({
+                    background_colour = '#000000', -- satisfy warning
+                    stages = 'fade',
+                })
+                require('lsp-notify').setup()
 
-            require('noice').setup({
-                lsp = {
-                    override = {
-                        ['vim.lsp.util.convert_input_to_markdown_lines'] = true,
-                        ['vim.lsp.util.stylize_markdown'] = true,
+                local telescope_notify = require('telescope').extensions.notify.notify
+                vim.keymap.set('n', '<leader>sn', telescope_notify, { desc = '[S]earch [N]otifications' })
+            end
+        },
+
+        -- Library of nice QoL features
+        {
+            'folke/noice.nvim',
+            event = 'VeryLazy',
+            dependencies = {
+                'MunifTanjim/nui.nvim',
+                'rcarriga/nvim-notify',
+            },
+            config = function()
+                require('noice').setup({
+                    lsp = {
+                        override = {
+                            ['vim.lsp.util.convert_input_to_markdown_lines'] = true,
+                            ['vim.lsp.util.stylize_markdown'] = true,
+                        },
                     },
-                },
-                presets = {
-                    lsp_doc_border = true,         -- add a border to hover docs and signature help
-                    long_message_to_split = false, -- long messages will be sent to a split
+                    presets = {
+                        lsp_doc_border = true,         -- add a border to hover docs and signature help
+                        long_message_to_split = false, -- long messages will be sent to a split
+                    }
+                })
+            end
+        },
+
+        -- Theme
+        {
+            'catppuccin/nvim',
+            name = 'catppuccin',
+            priority = 1000,
+            config = function()
+                require('catppuccin').setup({ transparent_background = true })
+                vim.cmd.colorscheme('catppuccin')
+            end
+        },
+
+        -- Highlight, edit, and navigate code
+        'nvim-treesitter/nvim-treesitter',
+
+        -- Fancier statusline
+        {
+            'nvim-lualine/lualine.nvim',
+            config = function() -- See `:help lualine.txt`
+                require('lualine').setup({
+                    options = {
+                        theme = 'catppuccin',
+                    },
+                })
+            end
+        },
+
+        -- Fuzzy Finder (files, lsp, etc)
+        {
+            'nvim-telescope/telescope.nvim',
+            branch = '0.1.x',
+            dependencies = {
+                'nvim-lua/plenary.nvim',
+                {
+                    'nvim-telescope/telescope-fzf-native.nvim',
+                    build =
+                        'cmake -S. -Bbuild -DCMAKE_BUILD_TYPE=Release && ' ..
+                        'cmake --build build --config Release && ' ..
+                        'cmake --install build --prefix build'
                 }
-            })
-        end
-    },
-
-    -- Theme
-    {
-        'catppuccin/nvim',
-        name = 'catppuccin',
-        priority = 1000,
-        config = function()
-            require('catppuccin').setup({ transparent_background = true })
-            vim.cmd.colorscheme('catppuccin')
-        end
-    },
-
-    -- Highlight, edit, and navigate code
-    'nvim-treesitter/nvim-treesitter',
-
-    -- Fancier statusline
-    {
-        'nvim-lualine/lualine.nvim',
-        config = function() -- See `:help lualine.txt`
-            require('lualine').setup({
-                options = {
-                    theme = 'catppuccin',
-                },
-            })
-        end
-    },
-
-    -- Fuzzy Finder (files, lsp, etc)
-    {
-        'nvim-telescope/telescope.nvim',
-        branch = '0.1.x',
-        dependencies = {
-            'nvim-lua/plenary.nvim',
-            {
-                'nvim-telescope/telescope-fzf-native.nvim',
-                build =
-                    'cmake -S. -Bbuild -DCMAKE_BUILD_TYPE=Release && ' ..
-                    'cmake --build build --config Release && ' ..
-                    'cmake --install build --prefix build'
-            }
+            },
         },
     },
-})
+    -- Options
+    {
+        ui = { border = 'rounded' }
+    }
+)
 
 -- [[ Languages ]]
 local lsp_servers = { 'rust_analyzer', 'lua_ls', 'pyright', 'bashls' }
