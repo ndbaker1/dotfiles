@@ -11,6 +11,7 @@ vim.o.showcmd = true
 vim.o.hlsearch = false
 vim.o.scrolloff = 8
 vim.o.completeopt = 'menuone,noselect,noinsert,preview'
+vim.o.clipboard = 'unnamedplus'
 
 -- [[ Formatting ]]
 vim.o.tabstop = 4
@@ -31,37 +32,42 @@ vim.o.undodir = vim.fn.expand('~/.config/nvim/undodir')
 -- [[ Keymaps ]]
 vim.g.mapleader = ' '
 vim.g.maplocalleader = ' '
-vim.keymap.set('n', '<leader>q', ':q<CR>', { desc = "quit" })
-vim.keymap.set('n', '<leader>w', ':w<CR>', { desc = "write file" })
-vim.keymap.set('n', '<leader><leader>', '<c-^>', { desc = "switch to last buffer" })
--- terminal mode thing. escape the terminal using <Ctrl-x + Ctrl-c>
-vim.keymap.set('t', '<C-x><C-c>', '<C-\\><C-N>')
+vim.keymap.set('n', '<leader>q', ':q<CR>', { noremap = false, desc = 'quit' })
+vim.keymap.set('n', '<leader>w', ':w<CR>', { noremap = false, desc = 'write file' })
+vim.keymap.set('n', '<leader><leader>', '<c-^>', { noremap = false, desc = 'switch to last buffer' })
+
+
+if vim.g.vscode then
+    -- dont load anything else other than configs if this is used as a backend vscode
+    return
+end
+
 
 -- [[ Install Lazy ]]
-local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
+local lazypath = vim.fn.stdpath('data') .. '/lazy/lazy.nvim'
 if not vim.loop.fs_stat(lazypath) then
     vim.fn.system({
-        "git",
-        "clone",
-        "--filter=blob:none",
-        "https://github.com/folke/lazy.nvim.git",
-        "--branch=stable", -- latest stable release
+        'git',
+        'clone',
+        '--filter=blob:none',
+        'https://github.com/folke/lazy.nvim.git',
+        '--branch=stable', -- latest stable release
         lazypath,
     })
 end
 vim.opt.rtp:prepend(lazypath)
 
 require('lazy').setup({
-    -- theme
-    { "catppuccin/nvim", name = "catppuccin", priority = 1000 },
+    -- Detect tabstop and shiftwidth automatically
+    'tpope/vim-sleuth',
 
     -- Display Keymappings
     {
-        "folke/which-key.nvim",
+        'folke/which-key.nvim',
         config = function()
             vim.o.timeout = true
             vim.o.timeoutlen = 300
-            require("which-key").setup {}
+            require('which-key').setup {}
         end,
     },
 
@@ -71,11 +77,10 @@ require('lazy').setup({
         dependencies = {
             -- Automatically install LSPs to stdpath for neovim
             {
-                "williamboman/mason.nvim",
-                build = ":MasonUpdate", -- :MasonUpdate updates registry contents
+                'williamboman/mason.nvim',
+                build = ':MasonUpdate', -- :MasonUpdate updates registry contents
             },
             'williamboman/mason-lspconfig.nvim',
-
             -- Inlay Hints
             'simrat39/inlay-hints.nvim',
             -- Rust Inlay Hints
@@ -89,39 +94,59 @@ require('lazy').setup({
         dependencies = { 'hrsh7th/cmp-nvim-lsp', 'L3MON4D3/LuaSnip', 'saadparwaiz1/cmp_luasnip' },
     },
 
-    -- Highlight, edit, and navigate code
+    -- Fancier, non-blocking notifications
     {
-        'nvim-treesitter/nvim-treesitter',
-        run = function()
-            pcall(require('nvim-treesitter.install').update { with_sync = true })
-        end,
+        'rcarriga/nvim-notify',
+        config = function()
+            vim.notify = require('notify')
+        end
     },
 
-    'nvim-lualine/lualine.nvim', -- Fancier statusline
-    'tpope/vim-sleuth',          -- Detect tabstop and shiftwidth automatically
+    -- Theme
+    {
+        'catppuccin/nvim',
+        name = 'catppuccin',
+        priority = 1000,
+        config = function()
+            require('catppuccin').setup({ transparent_background = true })
+            vim.cmd.colorscheme('catppuccin')
+        end
+    },
+
+    -- Highlight, edit, and navigate code
+    'nvim-treesitter/nvim-treesitter',
+
+    -- Fancier statusline
+    {
+        'nvim-lualine/lualine.nvim',
+        config = function() -- See `:help lualine.txt`
+            require('lualine').setup {
+                options = {
+                    theme = 'catppuccin',
+                },
+            }
+        end
+    },
 
     -- Fuzzy Finder (files, lsp, etc)
     {
         'nvim-telescope/telescope.nvim',
         branch = '0.1.x',
-        dependencies = { 'nvim-lua/plenary.nvim' },
-    },
-
-    -- Fuzzy Finder Algorithm which dependencies local dependencies to be built. Only load if `make` is available
-    {
-        'nvim-telescope/telescope-fzf-native.nvim',
-        run = 'make',
-        cond = vim.fn.executable 'make' == 1,
+        dependencies = {
+            'nvim-lua/plenary.nvim',
+            {
+                -- Fuzzy Finder Algorithm which dependencies local dependencies to be built. Only load if `make` is available
+                'nvim-telescope/telescope-fzf-native.nvim',
+                run = 'make',
+                cond = vim.fn.executable 'make' == 1,
+                config = function()
+                    -- Enable telescope fzf native, if installed
+                    pcall(require('telescope').load_extension, 'fzf')
+                end
+            },
+        },
     },
 })
-
--- Set lualine as statusline
--- See `:help lualine.txt`
-require('lualine').setup {
-    options = {
-        theme = "catppuccin",
-    },
-}
 
 -- [[ Configure Treesitter ]]
 -- See `:help nvim-treesitter`
@@ -134,17 +159,18 @@ require('nvim-treesitter.configs').setup {
 
 -- [[ Configure Telescope ]]
 -- See `:help telescope` and `:help telescope.setup()`
-local actions = require("telescope.actions")
+local actions = require('telescope.actions')
 require('telescope').setup {
     defaults = {
         mappings = {
             i = {
-                ["<esc>"] = actions.close,
-                ["<C-j>"] = actions.move_selection_next,
-                ["<C-k>"] = actions.move_selection_previous,
+                ['<esc>'] = actions.close,
+                ['<C-j>'] = actions.move_selection_next,
+                ['<C-k>'] = actions.move_selection_previous,
             }
         },
-        path_display = { "smart" },
+        layout_strategy = 'vertical',
+        path_display = { 'smart' },
     }
 }
 vim.keymap.set('n', '<C-p>', require('telescope.builtin').find_files, { desc = '[S]earch [F]iles' })
@@ -154,8 +180,6 @@ vim.keymap.set('n', '<leader>sg', require('telescope.builtin').live_grep, { desc
 vim.keymap.set('n', '<leader>sd', require('telescope.builtin').diagnostics, { desc = '[S]earch [D]iagnostics' })
 vim.keymap.set('n', '<leader>so', require('telescope.builtin').oldfiles, { desc = '[S]earch [O]ld' })
 
--- Enable telescope fzf native, if installed
-pcall(require('telescope').load_extension, 'fzf')
 
 -- [[ LSP settings ]]
 --  This function gets run when an LSP connects to a particular buffer.
@@ -198,9 +222,9 @@ local on_attach = function(_, bufnr)
     -- shortcut to use formatting command
     nmap('F', ':Format<CR>', 'Format Document with LPS')
 
-    vim.api.nvim_create_autocmd("BufWritePost", {
-        pattern = "*",
-        command = ":Format",
+    vim.api.nvim_create_autocmd('BufWritePost', {
+        pattern = '*',
+        command = ':Format',
     })
 end
 
@@ -273,7 +297,3 @@ cmp.setup {
         { name = 'luasnip' },
     },
 }
-
--- [[ Themeing ]]
-require("catppuccin").setup({ transparent_background = true })
-vim.cmd.colorscheme("catppuccin")
