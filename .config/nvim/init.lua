@@ -81,10 +81,8 @@ require('lazy').setup({
                 build = ':MasonUpdate', -- :MasonUpdate updates registry contents
             },
             'williamboman/mason-lspconfig.nvim',
-            -- Inlay Hints
-            'simrat39/inlay-hints.nvim',
-            -- Rust Inlay Hints
-            'simrat39/rust-tools.nvim',
+            'simrat39/inlay-hints.nvim', -- Inlay Hints
+            'simrat39/rust-tools.nvim',  -- Rust Inlay Hints
         },
     },
 
@@ -96,9 +94,14 @@ require('lazy').setup({
 
     -- Fancier, non-blocking notifications
     {
-        'rcarriga/nvim-notify',
+        "folke/noice.nvim",
+        event = "VeryLazy",
+        dependencies = {
+            "MunifTanjim/nui.nvim",
+            "rcarriga/nvim-notify",
+        },
         config = function()
-            vim.notify = require('notify')
+            require("noice").setup({})
         end
     },
 
@@ -135,15 +138,12 @@ require('lazy').setup({
         dependencies = {
             'nvim-lua/plenary.nvim',
             {
-                -- Fuzzy Finder Algorithm which dependencies local dependencies to be built. Only load if `make` is available
                 'nvim-telescope/telescope-fzf-native.nvim',
-                run = 'make',
-                cond = vim.fn.executable 'make' == 1,
-                config = function()
-                    -- Enable telescope fzf native, if installed
-                    pcall(require('telescope').load_extension, 'fzf')
-                end
-            },
+                build =
+                    'cmake -S. -Bbuild -DCMAKE_BUILD_TYPE=Release && ' ..
+                    'cmake --build build --config Release && ' ..
+                    'cmake --install build --prefix build'
+            }
         },
     },
 })
@@ -160,6 +160,7 @@ require('nvim-treesitter.configs').setup {
 -- [[ Configure Telescope ]]
 -- See `:help telescope` and `:help telescope.setup()`
 local actions = require('telescope.actions')
+local builtins = require('telescope.builtin')
 require('telescope').setup {
     defaults = {
         mappings = {
@@ -173,12 +174,13 @@ require('telescope').setup {
         path_display = { 'smart' },
     }
 }
-vim.keymap.set('n', '<C-p>', require('telescope.builtin').find_files, { desc = '[S]earch [F]iles' })
-vim.keymap.set('n', '<leader>sh', require('telescope.builtin').help_tags, { desc = '[S]earch [H]elp' })
-vim.keymap.set('n', '<leader>sw', require('telescope.builtin').grep_string, { desc = '[S]earch current [W]ord' })
-vim.keymap.set('n', '<leader>sg', require('telescope.builtin').live_grep, { desc = '[S]earch by [G]rep' })
-vim.keymap.set('n', '<leader>sd', require('telescope.builtin').diagnostics, { desc = '[S]earch [D]iagnostics' })
-vim.keymap.set('n', '<leader>so', require('telescope.builtin').oldfiles, { desc = '[S]earch [O]ld' })
+vim.keymap.set('n', '<C-p>', builtins.find_files, { desc = '[S]earch [F]iles' })
+vim.keymap.set('n', '<leader>sh', builtins.help_tags, { desc = '[S]earch [H]elp' })
+vim.keymap.set('n', '<leader>sw', builtins.grep_string, { desc = '[S]earch current [W]ord' })
+vim.keymap.set('n', '<leader>sg', builtins.live_grep, { desc = '[S]earch by [G]rep' })
+vim.keymap.set('n', '<leader>sd', builtins.diagnostics, { desc = '[S]earch [D]iagnostics' })
+vim.keymap.set('n', '<leader>so', builtins.oldfiles, { desc = '[S]earch [O]ld' })
+vim.keymap.set('n', '<leader>sb', builtins.builtin, { desc = '[S]earch [B]uiltins' })
 
 
 -- [[ LSP settings ]]
