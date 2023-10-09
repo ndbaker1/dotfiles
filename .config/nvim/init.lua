@@ -304,6 +304,11 @@ require('mason-lspconfig').setup({
 local lspconfig = require('lspconfig')
 -- nvim-cmp supports additional completion capabilities
 local capabilities = require('cmp_nvim_lsp').default_capabilities(vim.lsp.protocol.make_client_capabilities())
+-- handlers for messages
+local handlers = {
+    ['textDocument/hover'] = vim.lsp.with(vim.lsp.handlers.hover, cmp.config.window.bordered()),
+    ['textDocument/signatureHelp'] = vim.lsp.with(vim.lsp.handlers.signature_help, cmp.config.window.bordered()),
+}
 --  This function gets run when an LSP connects to a particular buffer.
 local on_attach = function(_, bufnr)
     -- In this case, we create a function that lets us more easily define mappings specific
@@ -347,6 +352,7 @@ end
 
 for _, lsp in ipairs(lsp_servers) do
     lspconfig[lsp].setup({
+        handlers = handlers,
         on_attach = on_attach,
         capabilities = capabilities,
     })
