@@ -37,7 +37,8 @@ vim.keymap.set('n', '<leader>q', ':q<CR>', { noremap = false, desc = 'quit' })
 vim.keymap.set('n', '<leader>w', ':w<CR>', { noremap = false, desc = 'write file' })
 vim.keymap.set('n', '<leader><leader>', '<c-^>', { noremap = false, desc = 'switch to last buffer' })
 
-function fast_pc()
+-- helper util to check host power
+local fast_pc = function()
     local bogomips = tonumber(vim.fn.system({
         'awk',
         'BEGIN { IGNORECASE = 1 } /bogomips/{print $3; exit}',
