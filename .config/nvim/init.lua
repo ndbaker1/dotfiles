@@ -103,7 +103,6 @@ require('lazy').setup(
         -- Library of nice QoL features
         {
             'folke/noice.nvim',
-            cond = fast_pc,
             event = 'VeryLazy',
             dependencies = {
                 'MunifTanjim/nui.nvim',
