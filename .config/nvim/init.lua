@@ -37,6 +37,15 @@ vim.keymap.set('n', '<leader>q', ':q<CR>', { noremap = false, desc = 'quit' })
 vim.keymap.set('n', '<leader>w', ':w<CR>', { noremap = false, desc = 'write file' })
 vim.keymap.set('n', '<leader><leader>', '<c-^>', { noremap = false, desc = 'switch to last buffer' })
 
+function fast_pc()
+    local bogomips = tonumber(vim.fn.system({
+        'awk',
+        'BEGIN { IGNORECASE = 1 } /bogomips/{print $3; exit}',
+        '/proc/cpuinfo',
+    }))
+    return bogomips > 2000 -- disable when the system isnt powerful enough
+end
+
 -- [[ Lazy.nvim ]]
 local lazypath = vim.fn.stdpath('data') .. '/lazy/lazy.nvim'
 if not vim.loop.fs_stat(lazypath) then
@@ -90,37 +99,28 @@ require('lazy').setup(
             },
         },
 
-        -- Fancier, non-blocking notifications
-        {
-            'rcarriga/nvim-notify',
-            dependencies = { 'mrded/nvim-lsp-notify' },
-            cond = function()
-                local bogomips = tonumber(vim.fn.system({
-                    'awk',
-                    'BEGIN { IGNORECASE = 1 } /bogomips/{print $3; exit}',
-                    '/proc/cpuinfo',
-                }))
-                return bogomips > 2500 -- disable when the system isnt powerful enough
-            end,
-            config = function()
-                require('notify').setup({
-                    background_colour = '#000000', -- satisfy warning
-                    stages = 'fade',
-                })
-                require('lsp-notify').setup()
-
-                local telescope_notify = require('telescope').extensions.notify.notify
-                vim.keymap.set('n', '<leader>sn', telescope_notify, { desc = '[S]earch [N]otifications' })
-            end
-        },
-
         -- Library of nice QoL features
         {
             'folke/noice.nvim',
+            cond = fast_pc,
             event = 'VeryLazy',
             dependencies = {
                 'MunifTanjim/nui.nvim',
-                'rcarriga/nvim-notify',
+                -- Fancier, non-blocking notifications
+                {
+                    'rcarriga/nvim-notify',
+                    dependencies = { 'mrded/nvim-lsp-notify' },
+                    config = function()
+                        require('notify').setup({
+                            background_colour = '#000000', -- satisfy warning
+                            stages = 'fade',
+                        })
+                        require('lsp-notify').setup()
+
+                        local telescope_notify = require('telescope').extensions.notify.notify
+                        vim.keymap.set('n', '<leader>sn', telescope_notify, { desc = '[S]earch [N]otifications' })
+                    end
+                },
             },
             config = function()
                 require('noice').setup({
