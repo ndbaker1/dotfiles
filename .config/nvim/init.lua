@@ -94,6 +94,14 @@ require('lazy').setup(
         {
             'rcarriga/nvim-notify',
             dependencies = { 'mrded/nvim-lsp-notify' },
+            cond = function()
+                local bogomips = tonumber(vim.fn.system({
+                    'awk',
+                    'BEGIN { IGNORECASE = 1 } /bogomips/{print $3; exit}',
+                    '/proc/cpuinfo',
+                }))
+                return bogomips > 2500 -- disable when the system isnt powerful enough
+            end,
             config = function()
                 require('notify').setup({
                     background_colour = '#000000', -- satisfy warning
