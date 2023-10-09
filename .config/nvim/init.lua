@@ -110,13 +110,11 @@ require('lazy').setup(
                 -- Fancier, non-blocking notifications
                 {
                     'rcarriga/nvim-notify',
-                    dependencies = { 'mrded/nvim-lsp-notify' },
                     config = function()
                         require('notify').setup({
                             background_colour = '#000000', -- satisfy warning
                             stages = 'fade',
                         })
-                        require('lsp-notify').setup()
 
                         local telescope_notify = require('telescope').extensions.notify.notify
                         vim.keymap.set('n', '<leader>sn', telescope_notify, { desc = '[S]earch [N]otifications' })
@@ -125,11 +123,18 @@ require('lazy').setup(
             },
             config = function()
                 require('noice').setup({
+                    cmdline = { enabled = fast_pc() },
+                    messages = { enabled = fast_pc() },
+                    popupmenu = { enabled = fast_pc() },
+                    notify = { enabled = fast_pc() },
                     lsp = {
                         override = {
                             ['vim.lsp.util.convert_input_to_markdown_lines'] = true,
                             ['vim.lsp.util.stylize_markdown'] = true,
                         },
+                        progress = {
+                            view = 'mini',
+                        }
                     },
                     presets = {
                         lsp_doc_border = true,         -- add a border to hover docs and signature help
@@ -304,11 +309,6 @@ require('mason-lspconfig').setup({
 local lspconfig = require('lspconfig')
 -- nvim-cmp supports additional completion capabilities
 local capabilities = require('cmp_nvim_lsp').default_capabilities(vim.lsp.protocol.make_client_capabilities())
--- handlers for messages
-local handlers = {
-    ['textDocument/hover'] = vim.lsp.with(vim.lsp.handlers.hover, cmp.config.window.bordered()),
-    ['textDocument/signatureHelp'] = vim.lsp.with(vim.lsp.handlers.signature_help, cmp.config.window.bordered()),
-}
 --  This function gets run when an LSP connects to a particular buffer.
 local on_attach = function(_, bufnr)
     -- In this case, we create a function that lets us more easily define mappings specific
@@ -352,7 +352,6 @@ end
 
 for _, lsp in ipairs(lsp_servers) do
     lspconfig[lsp].setup({
-        handlers = handlers,
         on_attach = on_attach,
         capabilities = capabilities,
     })
