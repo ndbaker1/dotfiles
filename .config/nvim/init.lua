@@ -81,7 +81,7 @@ require('lazy').setup(
         {
             'neovim/nvim-lspconfig',
             dependencies = {
-                { 'williamboman/mason.nvim', build = ':MasonUpdate' },
+                'williamboman/mason.nvim',
                 'williamboman/mason-lspconfig.nvim',
 
                 'simrat39/inlay-hints.nvim', -- Inlay Hints
