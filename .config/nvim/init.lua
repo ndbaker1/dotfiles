@@ -35,7 +35,6 @@ vim.g.mapleader = ' '
 vim.g.maplocalleader = vim.g.mapleader
 vim.keymap.set('n', '<leader>q', ':q<CR>', { noremap = false, desc = 'quit' })
 vim.keymap.set('n', '<leader>w', ':w<CR>', { noremap = false, desc = 'write file' })
-vim.keymap.set('n', '<leader><leader>', '<c-^>', { noremap = false, desc = 'switch to last buffer' })
 
 -- helper util to check host power
 local fast_pc = function()
@@ -184,6 +183,32 @@ require('lazy').setup(
                 }
             },
         },
+
+        {
+            "nvim-tree/nvim-tree.lua",
+            config = function()
+                vim.g.loaded_netrw = 1
+                vim.g.loaded_netrwPlugin = 1
+
+                require("nvim-tree").setup({
+                    hijack_cursor = true,
+                    update_focused_file = {
+                        enable = true,
+                    },
+                    actions = {
+                        open_file = {
+                            quit_on_open = true,
+                        },
+                    },
+                    filters = { dotfiles = true },
+                    on_attach = function(buf)
+                        local api = require('nvim-tree.api')
+                        api.config.mappings.default_on_attach(buf)
+                        vim.keymap.set('n', '?', api.tree.toggle_help)
+                    end
+                })
+            end
+        }
     },
     -- Options
     {
@@ -228,6 +253,7 @@ vim.keymap.set('n', '<leader>sg', builtins.live_grep, { desc = '[S]earch by [G]r
 vim.keymap.set('n', '<leader>sd', builtins.diagnostics, { desc = '[S]earch [D]iagnostics' })
 vim.keymap.set('n', '<leader>so', builtins.oldfiles, { desc = '[S]earch [O]ld' })
 vim.keymap.set('n', '<leader>sb', builtins.builtin, { desc = '[S]earch [B]uiltins' })
+vim.keymap.set('n', '<leader>ss', require('nvim-tree.api').tree.open, { desc = 'Open Tree' })
 
 -- [[ Completion ]]
 local cmp = require('cmp')
