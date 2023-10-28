@@ -2,7 +2,7 @@
 	email = ndbaker1@outlook.com
 	name = Nick Baker
 [core]
-  autocrlf = input
+	autocrlf = false
   safecrlf = true
 	editor = nvim
 [alias]
