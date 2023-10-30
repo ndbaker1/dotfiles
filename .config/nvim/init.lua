@@ -323,7 +323,11 @@ cmp.setup({
 })
 
 -- [[ Mason ]]
-require('mason').setup()
+require('mason').setup({
+    ui = {
+        border = 'rounded'
+    }
+})
 -- Ensure the servers above are installed
 require('mason-lspconfig').setup({
     -- add language servers that arent managed by mason
