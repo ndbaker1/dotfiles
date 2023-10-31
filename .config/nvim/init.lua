@@ -322,18 +322,6 @@ cmp.setup({
     },
 })
 
--- [[ Mason ]]
-require('mason').setup({
-    ui = {
-        border = 'rounded'
-    }
-})
--- Ensure the servers above are installed
-require('mason-lspconfig').setup({
-    -- add language servers that arent managed by mason
-    ensure_installed = lsp_servers,
-})
-
 -- [[ LSPConfig ]]
 local lspconfig = require('lspconfig')
 -- nvim-cmp supports additional completion capabilities
@@ -379,12 +367,28 @@ local on_attach = function(_, bufnr)
     nmap('F', ':Format<CR>', 'Format Document with LPS')
 end
 
-for _, lsp in ipairs(lsp_servers) do
-    lspconfig[lsp].setup({
-        on_attach = on_attach,
-        capabilities = capabilities,
-    })
-end
+-- [[ Mason ]]
+require('mason').setup({
+    ui = {
+        border = 'rounded'
+    }
+})
+-- Ensure the servers above are installed
+require('mason-lspconfig').setup({
+    -- add language servers that arent managed by mason
+    ensure_installed = lsp_servers,
+})
+require('mason-lspconfig').setup_handlers({
+    function(lsp)
+        lspconfig[lsp].setup({
+            on_attach = on_attach,
+            capabilities = capabilities,
+        })
+    end,
+    ['rust_analyzer'] = function()
+        require('rust-tools').setup()
+    end,
+})
 
 -- [[ ETC ]]
 
