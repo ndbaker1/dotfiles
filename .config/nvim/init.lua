@@ -43,7 +43,11 @@ local fast_pc = function()
         'BEGIN { IGNORECASE = 1 } /bogomips/{print $3; exit}',
         '/proc/cpuinfo',
     }))
-    return bogomips > 2000 -- disable when the system isnt powerful enough
+    if bogomips == nil then
+        return true -- if we failed to get a value then lets just enable it 🙃
+    else
+        return bogomips > 2000 -- disable when the system isnt powerful enough
+    end
 end
 
 -- [[ Lazy.nvim ]]
