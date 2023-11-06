@@ -44,7 +44,7 @@ local fast_pc = function()
         '/proc/cpuinfo',
     }))
     if bogomips == nil then
-        return true -- if we failed to get a value then lets just enable it 🙃
+        return true            -- if we failed to get a value then lets just enable it 🙃
     else
         return bogomips > 2000 -- disable when the system isnt powerful enough
     end
@@ -390,7 +390,12 @@ require('mason-lspconfig').setup_handlers({
         })
     end,
     ['rust_analyzer'] = function()
-        require('rust-tools').setup()
+        require('rust-tools').setup({
+            server = {
+                on_attach = on_attach,
+                capabilities = capabilities,
+            }
+        })
     end,
 })
 
