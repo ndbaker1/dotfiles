@@ -54,8 +54,7 @@ end
 local lazypath = vim.fn.stdpath('data') .. '/lazy/lazy.nvim'
 if not vim.loop.fs_stat(lazypath) then
     vim.fn.system({
-        'git',
-        'clone',
+        'git', 'clone',
         '--filter=blob:none',
         'https://github.com/folke/lazy.nvim.git',
         '--branch=stable', -- latest stable release
@@ -69,14 +68,17 @@ require('lazy').setup(
     {
         -- Detect tabstop and shiftwidth automatically
         'tpope/vim-sleuth',
+        -- Treesitter
+        'nvim-treesitter/nvim-treesitter',
 
         -- Display Keymappings
         {
             'folke/which-key.nvim',
-            config = function()
+            opts = { window = { border = "single" } },
+            config = function(_, opts)
                 vim.o.timeout = true
                 vim.o.timeoutlen = 300
-                require('which-key').setup()
+                require('which-key').setup(opts)
             end,
         },
 
@@ -92,7 +94,7 @@ require('lazy').setup(
             },
         },
 
-        -- Autocompletion
+        -- Completion
         {
             'hrsh7th/nvim-cmp',
             dependencies = {
@@ -107,43 +109,21 @@ require('lazy').setup(
         {
             'folke/noice.nvim',
             event = 'VeryLazy',
-            dependencies = {
-                'MunifTanjim/nui.nvim',
-                -- Fancier, non-blocking notifications
-                {
-                    'rcarriga/nvim-notify',
-                    config = function()
-                        require('notify').setup({
-                            background_colour = '#000000', -- satisfy warning
-                            stages = 'fade',
-                        })
-
-                        local telescope_notify = require('telescope').extensions.notify.notify
-                        vim.keymap.set('n', '<leader>sn', telescope_notify, { desc = '[S]earch [N]otifications' })
-                    end
-                },
-            },
-            config = function()
-                require('noice').setup({
-                    cmdline = { enabled = fast_pc() },
-                    messages = { enabled = fast_pc() },
-                    popupmenu = { enabled = fast_pc() },
-                    notify = { enabled = fast_pc() },
-                    lsp = {
-                        override = {
-                            ['vim.lsp.util.convert_input_to_markdown_lines'] = true,
-                            ['vim.lsp.util.stylize_markdown'] = true,
-                        },
-                        progress = {
-                            view = 'mini',
-                        }
+            dependencies = { 'MunifTanjim/nui.nvim' },
+            opts = {
+                messages = { enabled = true },
+                cmdline = { enabled = fast_pc() }, -- Don't waste on this if slow
+                lsp = {
+                    override = {
+                        ['vim.lsp.util.convert_input_to_markdown_lines'] = true,
+                        ['vim.lsp.util.stylize_markdown'] = true,
                     },
-                    presets = {
-                        lsp_doc_border = true,         -- add a border to hover docs and signature help
-                        long_message_to_split = false, -- long messages will be sent to a split
-                    }
-                })
-            end
+                },
+                presets = {
+                    lsp_doc_border = true,         -- add a border to hover docs and signature help
+                    long_message_to_split = false, -- long messages will be sent to a split
+                }
+            }
         },
 
         -- Theme
@@ -151,25 +131,21 @@ require('lazy').setup(
             'catppuccin/nvim',
             name = 'catppuccin',
             priority = 1000,
-            config = function()
-                require('catppuccin').setup({ transparent_background = true })
+            opts = { transparent_background = true },
+            config = function(_, opts)
+                require('catppuccin').setup(opts)
                 vim.cmd.colorscheme('catppuccin')
             end
         },
 
-        -- Highlight, edit, and navigate code
-        'nvim-treesitter/nvim-treesitter',
-
         -- Fancier statusline
         {
             'nvim-lualine/lualine.nvim',
-            config = function() -- See `:help lualine.txt`
-                require('lualine').setup({
-                    options = {
-                        theme = 'catppuccin',
-                    },
-                })
-            end
+            opts = {
+                options = {
+                    theme = "catppuccin"
+                }
+            }
         },
 
         -- Fuzzy Finder (files, lsp, etc)
@@ -188,29 +164,32 @@ require('lazy').setup(
             },
         },
 
+        -- File Tree
         {
             "nvim-tree/nvim-tree.lua",
-            config = function()
+            opts = {
+                hijack_cursor = true,
+                update_focused_file = {
+                    enable = true,
+                },
+                actions = {
+                    open_file = {
+                        quit_on_open = true,
+                    },
+                },
+                filters = {
+                    dotfiles = true,
+                },
+                on_attach = function(buf)
+                    local api = require('nvim-tree.api')
+                    api.config.mappings.default_on_attach(buf)
+                    vim.keymap.set('n', '?', api.tree.toggle_help)
+                end
+            },
+            config = function(_, opts)
                 vim.g.loaded_netrw = 1
                 vim.g.loaded_netrwPlugin = 1
-
-                require("nvim-tree").setup({
-                    hijack_cursor = true,
-                    update_focused_file = {
-                        enable = true,
-                    },
-                    actions = {
-                        open_file = {
-                            quit_on_open = true,
-                        },
-                    },
-                    filters = { dotfiles = true },
-                    on_attach = function(buf)
-                        local api = require('nvim-tree.api')
-                        api.config.mappings.default_on_attach(buf)
-                        vim.keymap.set('n', '?', api.tree.toggle_help)
-                    end
-                })
+                require("nvim-tree").setup(opts)
             end
         }
     },
@@ -258,6 +237,7 @@ vim.keymap.set('n', '<leader>sd', builtins.diagnostics, { desc = '[S]earch [D]ia
 vim.keymap.set('n', '<leader>so', builtins.oldfiles, { desc = '[S]earch [O]ld' })
 vim.keymap.set('n', '<leader>sb', builtins.builtin, { desc = '[S]earch [B]uiltins' })
 vim.keymap.set('n', '<leader>ss', require('nvim-tree.api').tree.open, { desc = 'Open Tree' })
+vim.keymap.set('n', '<leader>sm', function() require("noice").cmd("telescope") end, { desc = '[S]earch [M]essages' })
 
 -- [[ Completion ]]
 local cmp = require('cmp')
@@ -350,6 +330,7 @@ local on_attach = function(_, bufnr)
             vim.lsp.buf.formatting()
         end
     end, { desc = 'Format current buffer with LSP' })
+
     vim.api.nvim_create_autocmd('BufWritePost', {
         pattern = '*',
         command = ':Format',
