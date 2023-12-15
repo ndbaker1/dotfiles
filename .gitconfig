@@ -1,26 +1,32 @@
 [user]
-	email = ndbaker1@outlook.com
-	name = Nick Baker
+email = ndbaker1@outlook.com
+name = Nick Baker
+
 [core]
-	autocrlf = false
-  safecrlf = true
-	editor = nvim
+autocrlf = false
+safecrlf = true
+editor = nvim
+
 [alias]
-  c = commit
-	s = status
-	st = status
-	lg = log --oneline
-	last = log -1 HEAD
-	cl = log -p -- ':(exclude)*.lock'
-	# https://stackoverflow.com/a/11688523/472927
-	ss = "!f() { git stash show stash^{/$*} -p; }; f"
-	sa = "!f() { git stash apply stash^{/$*}; }; f"
-	sl = stash list
+c = commit
+s = status
+st = status
+lg = log --oneline
+last = log -1 HEAD
+cl = log -p -- ':(exclude)*.lock'
+# https://stackoverflow.com/a/11688523/472927
+ss = "!f() { git stash show stash^{/$*} -p; }; f"
+sa = "!f() { git stash apply stash^{/$*}; }; f"
+sl = stash list
+
 [github]
-  user = ndbaker1
+user = ndbaker1
+
 [pull]
-  ff = only
+ff = only
+
 [push]
-  default = simple
+default = simple
+
 [help]
-  autocorrect = 20
+autocorrect = 20
