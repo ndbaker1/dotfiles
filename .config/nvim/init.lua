@@ -180,6 +180,11 @@ require('lazy').setup(
                 filters = {
                     dotfiles = true,
                 },
+                view = {
+                    width = {
+                        max = 250,
+                    },
+                },
                 on_attach = function(buf)
                     local api = require('nvim-tree.api')
                     api.config.mappings.default_on_attach(buf)
