@@ -177,9 +177,6 @@ require('lazy').setup(
                         quit_on_open = true,
                     },
                 },
-                filters = {
-                    dotfiles = true,
-                },
                 view = {
                     width = {
                         max = 250,
