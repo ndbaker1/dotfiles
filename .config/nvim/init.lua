@@ -202,7 +202,7 @@ require('lazy').setup(
 )
 
 -- [[ Languages ]]
-local lsp_servers = { 'rust_analyzer', 'lua_ls', 'pyright', 'bashls' }
+local lsp_servers = { 'rust_analyzer', 'lua_ls', 'bashls' }
 local languages = { 'c', 'cpp', 'go', 'lua', 'python', 'rust', 'typescript', 'toml', 'json' }
 
 -- [[ Treesitter ]]
@@ -238,7 +238,7 @@ vim.keymap.set('n', '<leader>sg', builtins.live_grep, { desc = '[S]earch by [G]r
 vim.keymap.set('n', '<leader>sd', builtins.diagnostics, { desc = '[S]earch [D]iagnostics' })
 vim.keymap.set('n', '<leader>so', builtins.oldfiles, { desc = '[S]earch [O]ld' })
 vim.keymap.set('n', '<leader>sb', builtins.builtin, { desc = '[S]earch [B]uiltins' })
-vim.keymap.set('n', '<leader>ss', require('nvim-tree.api').tree.open, { desc = 'Open Tree' })
+vim.keymap.set('n', '<leader>e', require('nvim-tree.api').tree.open, { desc = 'Open Tree [E]xplorer' })
 vim.keymap.set('n', '<leader>sm', function() require("noice").cmd("telescope") end, { desc = '[S]earch [M]essages' })
 
 -- [[ Completion ]]

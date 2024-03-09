@@ -28,12 +28,12 @@ if status is-interactive
     abbr -a vim 'nvim'
   end
 
-  # use exa over ls with nice shortcuts
-  if command -v exa &> /dev/null
-    abbr -a l 'exa'
-    abbr -a ls 'exa -lg'
-    abbr -a ll 'exa -lag'
-    abbr -a lll 'exa -lag --tree'
+  # use eza over ls with nice shortcuts
+  if command -v eza &> /dev/null
+    abbr -a l 'eza'
+    abbr -a ls 'eza -lg'
+    abbr -a ll 'eza -lag'
+    abbr -a lll 'eza -lag --tree'
   else
     abbr -a l 'ls'
     abbr -a ls 'ls -l'
