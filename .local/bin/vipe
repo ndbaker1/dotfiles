@@ -1,0 +1,27 @@
+#!/bin/sh
+
+# Minimal editor interceptor for pipes using reference:
+# https://github.com/juliangruber/vipe
+
+# checks
+if [ -z "${EDITOR}" ]; then
+  echo "EDITOR environment variable is not set."
+  exit 1
+fi
+
+# create temp file
+t=$(mktemp)
+
+# read from stdin
+if [ ! -t 0 ]; then
+  cat > $t
+fi
+
+# spawn editor with stdio connected
+${EDITOR} $t < /dev/tty > /dev/tty || exit $?
+
+# write to stdout
+cat $t
+
+# cleanup
+rm $t
