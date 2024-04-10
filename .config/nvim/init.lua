@@ -179,7 +179,7 @@ require('lazy').setup(
                 },
                 view = {
                     width = {
-                        max = 250,
+                        max = '35%',
                     },
                 },
                 on_attach = function(buf)
