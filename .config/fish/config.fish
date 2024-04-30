@@ -40,11 +40,9 @@ if status is-interactive
     abbr -a ll 'ls -la'
   end
 
-  # use ripgrep if exists
-  if command -v rg &> /dev/null
-    abbr -a ghist 'history | rg'
-  else
-    abbr -a ghist 'history | grep'
+  # setup yazi if it exists
+  if command -v yazi &> /dev/null
+    abbr -a yy
   end
 
 end
