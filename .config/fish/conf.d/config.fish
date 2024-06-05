@@ -21,7 +21,14 @@ if status is-interactive
     abbr -a vim 'nvim'
   end
   if command -v yazi &> /dev/null
-    abbr -a yy 'yazi'
+    function yy
+    	set tmp (mktemp -t "yazi-cwd.XXXXXX")
+    	yazi $argv --cwd-file="$tmp"
+    	if set cwd (cat -- "$tmp"); and [ -n "$cwd" ]; and [ "$cwd" != "$PWD" ]
+    		cd -- "$cwd"
+    	end
+    	rm -f -- "$tmp"
+    end
   end
 
   # use eza over ls with nice shortcuts
