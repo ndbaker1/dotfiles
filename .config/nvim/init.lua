@@ -9,7 +9,6 @@ vim.o.incsearch = true
 vim.o.title = true
 vim.o.showcmd = true
 vim.o.hlsearch = false
-vim.o.scrolloff = 8
 vim.o.clipboard = 'unnamedplus'
 vim.opt.completeopt = { 'menuone', 'noselect', 'noinsert', 'preview' }
 
