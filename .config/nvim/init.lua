@@ -73,7 +73,7 @@ require('lazy').setup(
         -- Display Keymappings
         {
             'folke/which-key.nvim',
-            opts = { window = { border = "single" } },
+            opts = { win = { border = "single" } },
             config = function(_, opts)
                 vim.o.timeout = true
                 vim.o.timeoutlen = 300
