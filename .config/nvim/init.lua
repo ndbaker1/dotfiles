@@ -87,9 +87,6 @@ require('lazy').setup(
             dependencies = {
                 'williamboman/mason.nvim',
                 'williamboman/mason-lspconfig.nvim',
-
-                'simrat39/inlay-hints.nvim', -- Inlay Hints
-                'simrat39/rust-tools.nvim',  -- Rust Inlay Hints
             },
         },
 
@@ -111,7 +108,7 @@ require('lazy').setup(
             dependencies = { 'MunifTanjim/nui.nvim' },
             opts = {
                 messages = { enabled = true },
-                cmdline = { enabled = fast_pc() }, -- Don't waste on this if slow
+                cmdline = { enabled = fast_pc() }, -- Don't waste CPU on this if slow
                 lsp = {
                     override = {
                         ['vim.lsp.util.convert_input_to_markdown_lines'] = true,
@@ -306,7 +303,7 @@ cmp.setup({
 local lspconfig = require('lspconfig')
 -- nvim-cmp supports additional completion capabilities
 local capabilities = require('cmp_nvim_lsp').default_capabilities(vim.lsp.protocol.make_client_capabilities())
---  This function gets run when an LSP connects to a particular buffer.
+-- This function gets run when an LSP connects to a particular buffer.
 local on_attach = function(_, bufnr)
     -- In this case, we create a function that lets us more easily define mappings specific
     -- for LSP related items. It sets the mode, buffer and description for us each time.
@@ -316,6 +313,11 @@ local on_attach = function(_, bufnr)
         end
 
         vim.keymap.set('n', keys, func, { buffer = bufnr, desc = desc })
+    end
+
+    -- Neovim 0.10 added native support for inlay hints
+    if vim.lsp.inlay_hint then
+        vim.lsp.inlay_hint.enable(true, { buffer = 0 })
     end
 
     -- Create a command `:Format` local to the LSP buffer
@@ -366,19 +368,4 @@ require('mason-lspconfig').setup_handlers({
             capabilities = capabilities,
         })
     end,
-    ['rust_analyzer'] = function()
-        require('rust-tools').setup({
-            server = {
-                on_attach = on_attach,
-                capabilities = capabilities,
-            }
-        })
-    end,
 })
-
--- [[ ETC ]]
-
-if vim.g.vscode then
-    -- dont load anything else other than configs if this is used as a backend vscode
-    return
-end
