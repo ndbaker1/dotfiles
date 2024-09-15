@@ -241,7 +241,8 @@ require('lazy').setup(
                     long_message_to_split = false, -- long messages will be sent to a split
                 },
             },
-            keys = function(noice)
+            keys = function()
+                local noice = require('noice')
                 return {
                     { "<leader>sm", function() noice.cmd("telescope") end, desc = '[S]earch [M]essages' }
                 }
