@@ -162,7 +162,7 @@ require('lazy').setup(
                 'L3MON4D3/LuaSnip',
                 'hrsh7th/cmp-nvim-lsp',
                 'saadparwaiz1/cmp_luasnip',
-                'windwp/nvim-autopairs',
+                { 'windwp/nvim-autopairs', opts = {} },
             },
             opts = function()
                 local cmp = require('cmp')
