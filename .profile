@@ -12,7 +12,7 @@ fi
 export PATH="$HOME/bin:$HOME/.local/bin:$PATH"
 
 # golang path
-export PATH="$PATH:/usr/local/go/bin"
+export PATH="$PATH:/usr/local/go/bin:$HOME/go/bin"
 
 # cargo 
 if [ -f "$HOME/.cargo/env" ]; then
