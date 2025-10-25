@@ -5,6 +5,9 @@ family = "JetBrainsMono Nerd Font"
 [window]
 opacity = 0.8
 padding = { x = 15, y = 15 }
+dynamic_padding = true
+startup_mode = "Fullscreen"
+dynamic_title = false
 
 [colors]
 draw_bold_text_with_bright_colors = true
