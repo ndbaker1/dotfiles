@@ -1,10 +1,11 @@
 if status is-interactive
 
+  # ::::::::::::::::::
   # extra vim bindings
+
   fish_vi_key_bindings
 
   # ::::::::::::::::::
-
   # nice abbreviations
 
   if command -v git &> /dev/null
@@ -20,38 +21,34 @@ if status is-interactive
     abbr -a vi 'nvim'
     abbr -a vim 'nvim'
   end
-  if command -v yazi &> /dev/null
-    function yy
-    	set tmp (mktemp -t "yazi-cwd.XXXXXX")
-    	yazi $argv --cwd-file="$tmp"
-    	if set cwd (cat -- "$tmp"); and [ -n "$cwd" ]; and [ "$cwd" != "$PWD" ]
-    		cd -- "$cwd"
-    	end
-    	rm -f -- "$tmp"
-    end
-  end
 
-  # use eza over ls with nice shortcuts
+  # ::::::::::::::::::
+  # prefer eza over ls, and add abbreviations for both
+  # see: https://github.com/eza-community/eza
+
   if command -v eza &> /dev/null
-    abbr -a l 'eza'
     abbr -a ls 'eza -lg'
     abbr -a ll 'eza -lag'
     abbr -a lll 'eza -lag --tree'
   else
-    abbr -a l 'ls'
     abbr -a ls 'ls -l'
     abbr -a ll 'ls -la'
+    abbr -a lll 'ls -laR'
   end
 
   # ::::::::::::::::::
+  # setup yazi, a really great terminal file manager
+  # see: https://github.com/sxyazi/yazi
 
-  # setup/use binaries if they exist
-
-  if command -v zoxide &> /dev/null 
-    zoxide init fish --cmd cd | source
-  end
-  if command -v starship &> /dev/null 
-    starship init fish | source
+  if command -v yazi &> /dev/null
+    function yy
+      set tmp (mktemp -t "yazi-cwd.XXXXXX")
+      yazi $argv --cwd-file="$tmp"
+      if set cwd (cat -- "$tmp"); and [ -n "$cwd" ]; and [ "$cwd" != "$PWD" ]
+        cd -- "$cwd"
+      end
+      rm -f -- "$tmp"
+    end
   end
 
 end
