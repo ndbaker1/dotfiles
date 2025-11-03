@@ -51,7 +51,7 @@ local fast_pc = function()
 end
 
 -- [[ Languages ]]
-local lsp_servers = { 'rust_analyzer', 'lua_ls', 'bashls' }
+local lsp_servers = { 'rust_analyzer', 'lua_ls', 'bashls', 'gopls' }
 local languages = { 'c', 'cpp', 'go', 'lua', 'python', 'rust', 'typescript', 'toml', 'json' }
 
 -- [[ Lazy.nvim ]]
@@ -140,18 +140,21 @@ require('lazy').setup(
                         { buffer = bufnr, desc = '[D]ynamic [W]orkspace [S]ymbols' })
                 end
 
-                local lspconfig = require("lspconfig")
-                local capabilities = require('cmp_nvim_lsp')
-                    .default_capabilities(vim.lsp.protocol.make_client_capabilities())
-
-                require('mason-lspconfig').setup_handlers({
-                    function(lsp)
-                        lspconfig[lsp].setup({
-                            on_attach = on_attach,
-                            capabilities = capabilities,
-                        })
-                    end,
+                require('mason').setup()
+                require('mason-lspconfig').setup({
+                    ensure_installed = lsp_servers,
                 })
+
+                local lspconfig = require("lspconfig")
+                local capabilities = require('cmp_nvim_lsp').default_capabilities(vim.lsp.protocol
+                    .make_client_capabilities())
+
+                for _, server in ipairs(lsp_servers) do
+                    lspconfig[server].setup({
+                        on_attach = on_attach,
+                        capabilities = capabilities,
+                    })
+                end
             end,
         },
 
