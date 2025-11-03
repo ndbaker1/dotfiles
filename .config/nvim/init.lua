@@ -122,7 +122,7 @@ require('lazy').setup(
                         -- format on save
                         vim.api.nvim_create_autocmd('BufWritePost', {
                             buffer = bufnr,
-                            callback = vim.lsp.buf.format,
+                            callback = function() vim.lsp.buf.format({ bufnr = bufnr }) end,
                         })
 
                         -- native
