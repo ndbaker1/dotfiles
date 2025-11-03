@@ -158,6 +158,7 @@ require('lazy').setup(
         -- Completion
         {
             'saghen/blink.cmp',
+            version = "1.*",
             opts = {
                 keymap = {
                     preset = 'default',
@@ -183,6 +184,7 @@ require('lazy').setup(
                 sources = {
                     default = { 'lsp', 'path' },
                 },
+                fuzzy = { implementation = "prefer_rust" },
             },
         },
 
