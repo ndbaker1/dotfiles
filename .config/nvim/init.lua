@@ -102,7 +102,6 @@ require('lazy').setup(
                 { 'williamboman/mason.nvim',           opts = { ui = { border = 'rounded' } } },
                 { 'williamboman/mason-lspconfig.nvim', opts = { ensure_installed = lsp_servers } },
                 'nvim-telescope/telescope.nvim',
-                'hrsh7th/cmp-nvim-lsp',
             },
             init = function()
                 -- This function gets run when an LSP connects to a particular buffer.
@@ -145,84 +144,46 @@ require('lazy').setup(
                     ensure_installed = lsp_servers,
                 })
 
-                local lspconfig = require("lspconfig")
-                local capabilities = require('cmp_nvim_lsp').default_capabilities(vim.lsp.protocol
-                    .make_client_capabilities())
+                -- LSP capabilities to advertise from autocomplete
+                local capabilities = require('blink.cmp').get_lsp_capabilities(vim.lsp.protocol.make_client_capabilities())
 
-                for _, server in ipairs(lsp_servers) do
-                    lspconfig[server].setup({
-                        on_attach = on_attach,
-                        capabilities = capabilities,
-                    })
-                end
+                vim.lsp.config('*', {
+                    on_attach = on_attach,
+                    capabilities = capabilities,
+                })
+                vim.lsp.enable(lsp_servers)
             end,
         },
 
         -- Completion
         {
-            'hrsh7th/nvim-cmp',
-            dependencies = {
-                'L3MON4D3/LuaSnip',
-                'hrsh7th/cmp-nvim-lsp',
-                'saadparwaiz1/cmp_luasnip',
-                { 'windwp/nvim-autopairs', opts = {} },
+            'saghen/blink.cmp',
+            opts = {
+                keymap = {
+                    preset = 'default',
+                    ['<CR>'] = { 'select_and_accept', 'fallback' },
+                    ['<Tab>'] = { 'select_next', 'fallback' },
+                    ['<c-j>'] = { 'select_next', 'fallback' },
+                    ['<S-Tab>'] = { 'select_prev', 'fallback' },
+                    ['<c-k>'] = { 'select_prev', 'fallback' },
+                },
+                completion = {
+                    ghost_text = { enabled = true },
+                    documentation = {
+                        auto_show = true,
+                        window = { border = 'rounded' },
+                    },
+                    menu = {
+                        border = 'rounded',
+                        draw = {
+                            columns = { { 'label' }, { 'kind' } },
+                        },
+                    },
+                },
+                sources = {
+                    default = { 'lsp', 'path' },
+                },
             },
-            opts = function()
-                local cmp = require('cmp')
-                local luasnip = require('luasnip')
-
-                local select_opts = { behavior = cmp.SelectBehavior.Insert, select = true }
-                local cmp_modes = { 'i', 's' }
-
-                return {
-                    snippet = {
-                        expand = function(args)
-                            luasnip.lsp_expand(args.body)
-                        end,
-                    },
-                    sources = {
-                        { name = 'buffer' },
-                        { name = 'luasnip' },
-                        { name = 'nvim_lsp' },
-                        { name = 'nvim_lsp_signature_help' },
-                        { name = 'path' },
-                    },
-                    window = {
-                        completion = cmp.config.window.bordered(),
-                        documentation = cmp.config.window.bordered(),
-                    },
-                    mapping = cmp.mapping.preset.insert {
-                        ['<CR>'] = cmp.mapping.confirm({ select = true }),
-                        ['<c-j>'] = cmp.mapping(cmp.mapping.select_next_item(select_opts), cmp_modes),
-                        ['<c-k>'] = cmp.mapping(cmp.mapping.select_prev_item(select_opts), cmp_modes),
-                        ['<c-space>'] = cmp.mapping(function()
-                            if not cmp.visible() then
-                                cmp.complete()
-                            else
-                                cmp.select_next_item(select_opts)
-                            end
-                        end),
-                        ['<Tab>'] = cmp.mapping(function(fallback)
-                            if cmp.visible() then
-                                cmp.select_next_item()
-                            elseif luasnip.expand_or_jumpable() then
-                                luasnip.expand_or_jump()
-                            else
-                                fallback()
-                            end
-                        end, cmp_modes),
-                        ['<S-Tab>'] = cmp.mapping(function(fallback)
-                            if cmp.visible() then
-                                cmp.select_prev_item()
-                            elseif luasnip.jumpable(-1) then
-                                luasnip.jump(-1)
-                            else
-                                fallback()
-                            end
-                        end, cmp_modes),
-                    },
-                }
-            end
         },
 
         -- Library of nice QoL features
