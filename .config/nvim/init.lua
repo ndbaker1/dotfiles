@@ -23,6 +23,7 @@ vim.opt.vb = true
 vim.opt.clipboard = 'unnamedplus'
 
 -- ::: History
+vim.o.swapfile = false
 -- infinite undo!
 vim.o.undofile = true
 vim.o.undodir = vim.fn.expand('~/.config/nvim/undodir')
