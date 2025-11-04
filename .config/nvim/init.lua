@@ -13,6 +13,8 @@ vim.opt.textwidth = 80
 -- vim.opt.incsearch = true
 vim.opt.hlsearch = false
 vim.opt.expandtab = true
+-- always draw sign column. prevents buffer moving when adding/deleting sign
+vim.opt.signcolumn = 'yes'
 -- not wrapping just ends up looking cleaner most of the time.
 vim.opt.wrap = false
 -- a terminal should never make sound.
@@ -125,6 +127,10 @@ require('lazy').setup(
                             callback = function() vim.lsp.buf.format({ bufnr = bufnr }) end,
                         })
 
+                        -- disable the LSP formatting so 'gq' just does wrapping
+                        vim.bo[bufnr].formatexpr = nil
+                        vim.bo[bufnr].formatprg = nil
+
                         -- native
                         vim.keymap.set('n', '<leader>da', vim.lsp.buf.code_action,
                             { buffer = bufnr, desc = '[D]o Code [A]ction' })
@@ -197,6 +203,7 @@ require('lazy').setup(
                     ghost_text = { enabled = true },
                     documentation = {
                         auto_show = true,
+                        auto_show_delay_ms = 0, -- no delay on showing docs.
                         window = { border = 'rounded' },
                     },
                     menu = {
