@@ -1,15 +1,21 @@
-[font.normal]
-# https://github.com/ryanoasis/nerd-fonts/tree/master/patched-fonts/JetBrainsMono
-family = "JetBrainsMono Nerd Font"
+[font]
+# starting zoomed in helps on the eyes..
+size = 25
+# use a nerd font that has ligatures!
+# see: https://github.com/ryanoasis/nerd-fonts/tree/master/patched-fonts/JetBrainsMono
+normal = { family = "JetBrainsMono Nerd Font" }
 
 [window]
+# avoid having to maximize the window after starting
+startup_mode = "Maximized"
+# can be nice to see whats behind the terminal
 opacity = 0.8
 padding = { x = 15, y = 15 }
 dynamic_padding = true
-startup_mode = "Maximized"
 dynamic_title = false
 
 [colors]
+# bright colors help on the eyes..
 draw_bold_text_with_bright_colors = true
 
 # hack for windows because control+space is eaten by alacritty.
