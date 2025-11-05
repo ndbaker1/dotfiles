@@ -1,2 +1,6 @@
 #!/usr/bin/env bash
+
+# xenv (extended-env) is a simple tool to include environment variables from a
+# file when launching a new process.
+
 set -a && source "$1" && shift && "$@"
