@@ -1,0 +1,12 @@
+#!/usr/bin/env sh
+
+# wrapper script to make calling arbitrary python scripts easier.
+# see: https://github.com/astral-sh/uv/issues/6283
+# see: https://github.com/mgaitan/autopep723
+
+if ! command -v uvx > /dev/null; then
+    echo "script requires uv! https://github.com/astral-sh/uv"
+    exit 1
+fi
+
+uvx autopep723 "$@"
