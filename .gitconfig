@@ -1,6 +1,6 @@
 [user]
-	email = ndbaker1@outlook.com
-	name = Nick Baker
+	email = shivbhosale97@gmail.com
+	name = Shiv Bhosale
 [core]
 	autocrlf = input
 	safecrlf = true
@@ -22,4 +22,4 @@
 [init]
 	defaultBranch = main
 [github]
-	user = ndbaker1
+	user = shvbsle

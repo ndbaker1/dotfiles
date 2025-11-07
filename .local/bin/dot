@@ -1,6 +1,6 @@
 #!/usr/bin/env sh
 
-REPO_URL="https://github.com/ndbaker1/dotfiles"
+REPO_URL="https://github.com/shvbsle/dotfiles"
 DOTFILES_GIT_DIR="$HOME/.dotfiles.git"
 
 dotfiles() {
