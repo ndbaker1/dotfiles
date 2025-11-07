@@ -51,8 +51,9 @@ vim.keymap.set('n', '<leader>od',
     { desc = '[O]pen [Diagnostic]' }
 )
 
--- helper util to check host power
-local fast_pc = function()
+-- ::: Extra
+
+local function is_cpu_fast()
     local bogomips = tonumber(vim.fn.system({
         'awk',
         'BEGIN { IGNORECASE = 1 } /bogomips/{print $3; exit}',
@@ -65,12 +66,8 @@ local fast_pc = function()
     end
 end
 
--- ::: Languages
-local lsp_servers = { 'rust_analyzer', 'lua_ls', 'bashls', 'gopls' }
-local languages = { 'c', 'cpp', 'go', 'lua', 'python', 'rust', 'typescript', 'toml', 'json' }
-
--- ::: Plugin Manager
--- https://github.com/folke/lazy.nvim
+-- ::: Plugins
+-- see: https://github.com/folke/lazy.nvim
 local lazypath = vim.fn.stdpath('data') .. '/lazy/lazy.nvim'
 if not vim.loop.fs_stat(lazypath) then
     vim.fn.system({
@@ -88,10 +85,13 @@ require('lazy').setup(
         -- Treesitter
         {
             'nvim-treesitter/nvim-treesitter',
+            branch = 'master',
+            lazy = false,
+            build = ':TSUpdate',
             init = function()
                 require('nvim-treesitter.configs').setup({
                     -- Add languages to be installed here that you want installed for treesitter
-                    ensure_installed = languages,
+                    ensure_installed = { 'c', 'cpp', 'go', 'lua', 'python', 'rust', 'typescript', 'toml', 'json' },
                     highlight = { enable = true },
                     indent = { enable = true },
                 })
@@ -113,8 +113,10 @@ require('lazy').setup(
             'neovim/nvim-lspconfig',
             dependencies = {
                 { 'williamboman/mason.nvim',           opts = { ui = { border = 'rounded' } } },
-                { 'williamboman/mason-lspconfig.nvim', opts = { ensure_installed = lsp_servers } },
+                { 'williamboman/mason-lspconfig.nvim', opts = {} },
+                { 'windwp/nvim-autopairs',             opts = {} },
                 'nvim-telescope/telescope.nvim',
+                'saghen/blink.cmp',
             },
             init = function()
                 -- This function gets run when an LSP connects to a particular buffer.
@@ -168,22 +170,13 @@ require('lazy').setup(
 
                 -- LSP capabilities to advertise from autocomplete
                 local capabilities = require('blink.cmp').get_lsp_capabilities(vim.lsp.protocol.make_client_capabilities())
+                vim.lsp.config('*', { capabilities = capabilities })
 
-                vim.lsp.config('*', {
-                    capabilities = capabilities,
-                })
-
-                local lsp_configs = {}
                 for _, f in pairs(vim.api.nvim_get_runtime_file('lsp/*.lua', true)) do
+                    -- get last component of file and strip extension
                     local server_name = vim.fn.fnamemodify(f, ':t:r')
-                    table.insert(lsp_configs, server_name)
+                    vim.lsp.enable(server_name)
                 end
-                vim.lsp.enable(lsp_configs)
-
-                require('mason').setup()
-                require('mason-lspconfig').setup({
-                    ensure_installed = lsp_servers,
-                })
             end,
         },
 
@@ -228,7 +221,7 @@ require('lazy').setup(
             dependencies = { 'MunifTanjim/nui.nvim' },
             opts = {
                 messages = { enabled = true },
-                cmdline = { enabled = fast_pc() }, -- Don't waste CPU on this if slow
+                cmdline = { enabled = is_cpu_fast() }, -- Don't waste CPU on this if slow
                 lsp = {
                     override = {
                         ['vim.lsp.util.convert_input_to_markdown_lines'] = true,
@@ -248,7 +241,7 @@ require('lazy').setup(
             end
         },
 
-        -- Theme
+        -- Color Theme
         {
             'catppuccin/nvim',
             name = 'catppuccin',
@@ -337,7 +330,7 @@ require('lazy').setup(
         }
     },
 
-    -- Options
+    -- LazyNvim Options
     {
         ui = { border = 'rounded' }
     }
