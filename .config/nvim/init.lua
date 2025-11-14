@@ -31,7 +31,6 @@ vim.o.undodir = vim.fn.expand('~/.config/nvim/undodir')
 -- ::: Keymaps
 vim.keymap.set('n', '<leader>q', ':q<CR>', { noremap = false, desc = '[Q]uit' })
 vim.keymap.set('n', '<leader>w', ':w<CR>', { noremap = false, desc = '[W]rite file' })
-vim.keymap.set('n', '<leader>rn', vim.lsp.buf.rename, { desc = '[R]e[n]ame' })
 -- make j and k move by visual line, not actual line, when text is soft-wrapped
 vim.keymap.set('n', 'j', 'gj')
 vim.keymap.set('n', 'k', 'gk')
@@ -48,23 +47,8 @@ vim.diagnostic.config({
 })
 vim.keymap.set('n', '<leader>od',
     function() vim.diagnostic.open_float({ border = "rounded" }) end,
-    { desc = '[O]pen [Diagnostic]' }
+    { desc = '[O]pen [D]iagnostic' }
 )
-
--- ::: Extra
-
-local function is_cpu_fast()
-    local bogomips = tonumber(vim.fn.system({
-        'awk',
-        'BEGIN { IGNORECASE = 1 } /bogomips/{print $3; exit}',
-        '/proc/cpuinfo',
-    }))
-    if bogomips == nil then
-        return true            -- if we failed to get a value then lets just enable it 🙃
-    else
-        return bogomips > 2000 -- disable when the system isnt powerful enough
-    end
-end
 
 -- ::: Plugins
 -- see: https://github.com/folke/lazy.nvim
@@ -102,10 +86,6 @@ require('lazy').setup(
         {
             'folke/which-key.nvim',
             opts = { win = { border = "single" } },
-            init = function()
-                vim.o.timeout = true
-                vim.o.timeoutlen = 300
-            end
         },
 
         -- LSP Configuration & Plugins
@@ -113,10 +93,10 @@ require('lazy').setup(
             'neovim/nvim-lspconfig',
             dependencies = {
                 { 'williamboman/mason.nvim',           opts = { ui = { border = 'rounded' } } },
-                { 'williamboman/mason-lspconfig.nvim', opts = {} },
+                { 'williamboman/mason-lspconfig.nvim', opts = {} }, -- bridges mason to lspconfig.nvim
                 { 'windwp/nvim-autopairs',             opts = {} },
-                'nvim-telescope/telescope.nvim',
                 'saghen/blink.cmp',
+                'folke/snacks.nvim',
             },
             init = function()
                 -- This function gets run when an LSP connects to a particular buffer.
@@ -135,6 +115,8 @@ require('lazy').setup(
                         vim.bo[bufnr].formatprg = nil
 
                         -- native
+                        vim.keymap.set('n', '<leader>rn', vim.lsp.buf.rename,
+                            { buffer = bufnr, desc = '[R]e[n]ame' })
                         vim.keymap.set('n', '<leader>da', vim.lsp.buf.code_action,
                             { buffer = bufnr, desc = '[D]o Code [A]ction' })
                         vim.keymap.set('n', 'K', vim.lsp.buf.hover,
@@ -144,17 +126,16 @@ require('lazy').setup(
                         vim.keymap.set('n', 'gD', vim.lsp.buf.declaration,
                             { buffer = bufnr, desc = '[G]oto [D]eclaration' })
 
-                        -- telescope
-                        local builtins = require('telescope.builtin')
-                        vim.keymap.set('n', 'gr', builtins.lsp_references,
+                        -- snacks.nvim pickers
+                        vim.keymap.set('n', 'gr', function() Snacks.picker.lsp_references() end,
                             { buffer = bufnr, desc = '[G]oto [R]eferences' })
-                        vim.keymap.set('n', 'gd', builtins.lsp_definitions,
+                        vim.keymap.set('n', 'gd', function() Snacks.picker.lsp_definitions() end,
                             { buffer = bufnr, desc = '[G]oto [D]efinitions' })
-                        vim.keymap.set('n', 'gi', builtins.lsp_implementations,
+                        vim.keymap.set('n', 'gi', function() Snacks.picker.lsp_implementations() end,
                             { buffer = bufnr, desc = '[G]oto [I]mplementations' })
-                        vim.keymap.set('n', '<leader>ds', builtins.lsp_document_symbols,
+                        vim.keymap.set('n', '<leader>ds', function() Snacks.picker.lsp_symbols() end,
                             { buffer = bufnr, desc = '[D]ocument [S]ymbols' })
-                        vim.keymap.set('n', '<leader>dws', builtins.lsp_dynamic_workspace_symbols,
+                        vim.keymap.set('n', '<leader>dws', function() Snacks.picker.lsp_workspace_symbols() end,
                             { buffer = bufnr, desc = '[D]ynamic [W]orkspace [S]ymbols' })
 
                         -- server capabilities
@@ -216,12 +197,45 @@ require('lazy').setup(
 
         -- Library of nice QoL features
         {
+            "folke/snacks.nvim",
+            ---@type snacks.Config
+            opts = {
+                -- helps avoid loaing plugins on big files.
+                bigfile = { enabled = true },
+                -- swap the default nvim notifier with snacks.
+                notifier = { enabled = true },
+                picker = {
+                    enabled = true,
+                    layout = {
+                        layout = {
+                            box = "vertical",
+                            width = 0.8,
+                            height = 0.9,
+                            { win = "preview", border = true, title = "{preview:Preview}" },
+                            { win = "list",    border = true, title = "Results" },
+                            { win = "input",   border = true, title = "{title} {live} {flags}", height = 1 },
+                        },
+                    },
+                },
+            },
+            keys = {
+                { '<C-p>',      function() Snacks.picker.files() end,         desc = '[S]earch [F]iles' },
+                { '<leader>sh', function() Snacks.picker.help() end,          desc = '[S]earch [H]elp' },
+                { '<leader>sw', function() Snacks.picker.grep_word() end,     desc = '[S]earch current [W]ord' },
+                { '<leader>sg', function() Snacks.picker.grep() end,          desc = '[S]earch by [G]rep' },
+                { '<leader>sd', function() Snacks.picker.diagnostics() end,   desc = '[S]earch [D]iagnostics' },
+                { '<leader>so', function() Snacks.picker.recent() end,        desc = '[S]earch [O]ld' },
+                { '<leader>sl', function() Snacks.picker.git_log() end,       desc = '[S]earch Git [L]og' },
+                { "<leader>sn", function() Snacks.picker.notifications() end, desc = '[S]earch [N]otifications' },
+                { '<leader>sp', function() Snacks.picker() end,               desc = '[S]earch [P]ickers' },
+            },
+        },
+
+        -- Library of nice QoL plugins
+        {
             'folke/noice.nvim',
             event = 'VeryLazy',
-            dependencies = { 'MunifTanjim/nui.nvim' },
             opts = {
-                messages = { enabled = true },
-                cmdline = { enabled = is_cpu_fast() }, -- Don't waste CPU on this if slow
                 lsp = {
                     override = {
                         ['vim.lsp.util.convert_input_to_markdown_lines'] = true,
@@ -231,14 +245,8 @@ require('lazy').setup(
                 presets = {
                     lsp_doc_border = true,         -- add a border to hover docs and signature help
                     long_message_to_split = false, -- long messages will be sent to a split
-                },
-            },
-            keys = function()
-                local noice = require('noice')
-                return {
-                    { "<leader>sm", function() noice.cmd("telescope") end, desc = '[S]earch [M]essages' }
                 }
-            end
+            },
         },
 
         -- Color Theme
@@ -247,60 +255,14 @@ require('lazy').setup(
             name = 'catppuccin',
             priority = 1000,
             opts = { transparent_background = true },
-            init = function()
-                vim.cmd.colorscheme('catppuccin')
-            end
+            init = function() vim.cmd.colorscheme('catppuccin') end
         },
 
         -- Fancier statusline
         {
             'nvim-lualine/lualine.nvim',
             dependencies = { 'catppuccin/nvim' },
-            opts = { options = { theme = "catppuccin" } }
-        },
-
-        -- Fuzzy Finder (files, lsp, etc)
-        {
-            'nvim-telescope/telescope.nvim',
-            branch = '0.1.x',
-            dependencies = {
-                'nvim-lua/plenary.nvim',
-                {
-                    'nvim-telescope/telescope-fzf-native.nvim',
-                    build =
-                        'cmake -S. -Bbuild -DCMAKE_BUILD_TYPE=Release && ' ..
-                        'cmake --build build --config Release && ' ..
-                        'cmake --install build --prefix build'
-                }
-            },
-            opts = function()
-                local actions = require('telescope.actions')
-                return {
-                    defaults = {
-                        mappings = {
-                            i = {
-                                ['<esc>'] = actions.close,
-                                ['<C-j>'] = actions.move_selection_next,
-                                ['<C-k>'] = actions.move_selection_previous,
-                            }
-                        },
-                        layout_strategy = 'vertical',
-                        path_display = { 'smart' },
-                    }
-                }
-            end,
-            keys = function()
-                local builtins = require('telescope.builtin')
-                return {
-                    { '<C-p>',      builtins.find_files,  desc = '[S]earch [F]iles' },
-                    { '<leader>sh', builtins.help_tags,   desc = '[S]earch [H]elp' },
-                    { '<leader>sw', builtins.grep_string, desc = '[S]earch current [W]ord' },
-                    { '<leader>sg', builtins.live_grep,   desc = '[S]earch by [G]rep' },
-                    { '<leader>sd', builtins.diagnostics, desc = '[S]earch [D]iagnostics' },
-                    { '<leader>so', builtins.oldfiles,    desc = '[S]earch [O]ld' },
-                    { '<leader>sb', builtins.builtin,     desc = '[S]earch [B]uiltins' },
-                }
-            end
+            opts = { options = { theme = "catppuccin" } },
         },
 
         -- File Tree
@@ -330,7 +292,7 @@ require('lazy').setup(
         }
     },
 
-    -- LazyNvim Options
+    -- lazy.nvim Options
     {
         ui = { border = 'rounded' }
     }
