@@ -3,7 +3,7 @@ if status is-interactive
   # ::::::::::::::::::
   # prefer workspace-scoped kubeconfig
 
-  export KUBECONFIG=".kube/config:$HOME/.kube/config"
+  export KUBECONFIG="$KUBECONFIG:.kube/config:$HOME/.kube/config"
 
   # ::::::::::::::::::
   # setup kubernetes tooling abbreviations
