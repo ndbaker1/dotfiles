@@ -301,7 +301,13 @@ require('lazy').setup(
                     { '<leader>e', api.tree.open,       desc = 'Open Tree [E]xplorer' }
                 }
             end
-        }
+        },
+
+        -- Smear Cursor
+        {
+            "sphamba/smear-cursor.nvim",
+            opts = {},
+        },
     },
 
     -- lazy.nvim Options
