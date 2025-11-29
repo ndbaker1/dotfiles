@@ -51,4 +51,24 @@ if status is-interactive
     end
   end
 
+  # ::::::::::::::::::
+  # setup fzf shortcuts
+
+  if command -v fzf &> /dev/null
+    bind -M insert \cR 'commandline -r (history | fzf --height 40% --select-1)'
+  end
+
+  # ::::::::::::::::::
+  # amend the fish prompt
+
+  functions --copy fish_prompt fish_prompt_original
+
+  function fish_prompt
+    if test $SHLVL -gt 1
+      set_color blue; echo -n "($SHLVL) "; set_color normal;
+    end
+
+    fish_prompt_original
+  end
+
 end
