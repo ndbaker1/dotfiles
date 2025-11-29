@@ -19,8 +19,7 @@ if [ -f "$HOME/.cargo/env" ]; then
   . "$HOME/.cargo/env"
 fi
 
-# start fish as the interactive shell if it exists
 if command -v fish > /dev/null; then
+  export SHELL="$(which fish)"
   exec -l fish
 fi
-
