@@ -1,25 +1,35 @@
-# environment
+#!/usr/bin/env sh
 
+# :::::::::::::::::::::::::
+# POSIX compliant shell setup.
+
+# set default terminal.
 if command -v alacritty > /dev/null; then
   export TERM=alacritty
 fi
 
+# set default editor.
 if command -v nvim > /dev/null; then
   export EDITOR=nvim
 fi
 
-# include user's private bin and local bin
-export PATH="$HOME/bin:$HOME/.local/bin:$PATH"
+# add user's private and local bin paths.
+export PATH="$HOME/.local/bin:$HOME/bin:$PATH"
 
-# golang path
+# configure golang.
 export PATH="$PATH:/usr/local/go/bin:$HOME/go/bin"
 
-# cargo 
+# configure cargo.
 if [ -f "$HOME/.cargo/env" ]; then
   . "$HOME/.cargo/env"
 fi
 
+# set default shell.
 if command -v fish > /dev/null; then
   export SHELL="$(which fish)"
-  exec -l fish
 fi
+
+# :::::::::::::::::::::::::
+# start a new login shell.
+
+exec -l "$SHELL"

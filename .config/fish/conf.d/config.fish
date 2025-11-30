@@ -55,7 +55,7 @@ if status is-interactive
   # setup fzf shortcuts
 
   if command -v fzf &> /dev/null
-    bind -M insert \cR 'commandline -r (history | fzf --height 40% --select-1)'
+    bind -M insert \cR 'commandline -r (history | fzf --height 40% --select-1 --no-sort)'
   end
 
   # ::::::::::::::::::
