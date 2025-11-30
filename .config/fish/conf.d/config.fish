@@ -12,7 +12,7 @@ if status is-interactive
     abbr -a g 'git'
   end
   if command -v tmux &> /dev/null
-    abbr -a t 'tmux'
+    abbr -a tm 'tmux a || tmux'
   end
   if command -v cargo &> /dev/null
     abbr -a c 'cargo'
