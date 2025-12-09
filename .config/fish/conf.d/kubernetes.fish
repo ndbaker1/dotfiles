@@ -10,6 +10,10 @@ if status is-interactive
 
   if command -v kubectl &> /dev/null
     abbr -a k 'kubectl'
+
+    if command -v kubecolor &> /dev/null
+      alias kubectl='kubecolor'
+    end
   end
 
 end
