@@ -4,6 +4,8 @@ size = 25
 # use a nerd font that has ligatures!
 # see: https://github.com/ryanoasis/nerd-fonts/tree/master/patched-fonts/JetBrainsMono
 normal = { family = "JetBrainsMono Nerd Font" }
+# increase horizontal letter spacing just a bit to get that sweet spot on the eyes
+offset = { x = 1 }
 
 [window]
 # avoid having to maximize the window after starting
