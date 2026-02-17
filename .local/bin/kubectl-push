@@ -1,0 +1,87 @@
+#!/usr/bin/env bash
+
+set -o errexit
+set -o nounset
+set -o pipefail
+
+function get_image() {
+    local image_ref=$(docker images --filter dangling=false --format "table {{.Repository}}:{{.Tag}}\t{{.ID}}\t{{.CreatedSince}}\t{{.Size}}" | tail -n+2 | fzf --prompt 'select image: ' | cut -d' ' -f1)
+    [ -z "${image_ref}" ] && exit 1
+    echo ${image_ref} 1>&2
+    echo ${image_ref}
+}
+
+function get_node() {
+    local node=$(kubectl get nodes -o name | fzf --prompt 'select nodes: ' | cut -d'/' -f2)
+    [ -z "${node}" ] && exit 1
+    echo ${node}
+}
+
+function push() {
+    local image_ref=${1:-$(get_image)}
+    local node=${2:-$(get_node)}
+    local port=${3:-5000}
+    
+    local pod="kubectl-node-push"
+    local namespace="default"
+
+    # cleanup the pod from previous run
+    kubectl delete pod/${pod} --ignore-not-found
+    
+    # creating registry shim pod on node.
+    cat << EOF | kubectl apply -f -
+apiVersion: v1
+kind: Pod
+metadata:
+  name: ${pod}
+  namespace: ${namespace}
+spec:
+  nodeName: ${node}
+  restartPolicy: Never
+  containers:
+  - name: unregistry
+    image: ghcr.io/psviderski/unregistry:latest
+    securityContext:
+      privileged: true
+    env:
+    - name: UNREGISTRY_CONTAINERD_NAMESPACE
+      value: "k8s.io"
+    - name: UNREGISTRY_CONTAINERD_SOCK
+      value: "/run/containerd/containerd.sock"
+    volumeMounts:
+    - name: containerd-sock
+      mountPath: /run/containerd/containerd.sock
+  volumes:
+  - name: containerd-sock
+    hostPath:
+      path: /run/containerd/containerd.sock
+      type: Socket
+EOF
+    
+    # wait for the pods to officially come up.
+    kubectl wait --for=condition=Ready pod/${pod} --timeout=30s
+    # forward the port for unregistry, which is 5000.
+    kubectl port-forward pod/${pod} ${port}:5000 2>&1> /dev/null &
+    local port_forward_pid=$!
+    
+    # for silent kills later
+    disown
+    # give port-forward a moment to establish.
+    sleep 2
+
+    # NOTE: docker treats localhost as an "insecure registry" by default, so no TLS
+    # config is needed to push images.
+    docker tag "${image_ref}" "localhost:${port}/${image_ref}"
+    docker push "localhost:${port}/${image_ref}"
+    
+    # cleaning up the pods and forwarding process.
+    kill ${port_forward_pid}
+    kubectl delete pod/${pod}
+}
+
+if [[ " $@ " =~ " --help " ]] || [[ " $@ " =~ " -h " ]]; then
+    echo "usage: kubectl push IMAGE_REF NODE_NAME LOCAL_PORT"
+    exit 1
+fi
+
+push $@
