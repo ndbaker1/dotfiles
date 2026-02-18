@@ -5,7 +5,7 @@ set -o nounset
 set -o pipefail
 
 function get_image() {
-    local image_ref=$(docker images --filter dangling=false --format "table {{.Repository}}:{{.Tag}}\t{{.ID}}\t{{.CreatedSince}}\t{{.Size}}" | tail -n+2 | fzf --prompt 'select image: ' | cut -d' ' -f1)
+    local image_ref=$(docker images --filter dangling=false --format "table {{.Repository}}:{{.Tag}}\t{{.ID}}\t{{.CreatedSince}}\t{{.Size}}" | grep -v 'localhost' | tail -n+2 | fzf --prompt 'select image: ' | cut -d' ' -f1)
     [ -z "${image_ref}" ] && exit 1
     echo ${image_ref} 1>&2
     echo ${image_ref}
