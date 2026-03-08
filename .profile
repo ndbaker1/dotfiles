@@ -6,42 +6,26 @@
 # add user's private and local bin paths.
 export PATH="$HOME/.local/bin:$HOME/bin:$PATH"
 
-# configure nix.
-if [ -e $HOME/.nix-profile/etc/profile.d/nix.sh ]; then
-    . $HOME/.nix-profile/etc/profile.d/nix.sh
-fi
-
-# configure python (via uv).
-if command -v uv > /dev/null; then
-  UV_PYTHON_DIR=$(uv python dir)
-  if [ -n "$UV_PYTHON_DIR" ]; then
-    export PYTHONHOME="$(ls -d "$UV_PYTHON_DIR"/cpython-* | head -n 1)"
-    export PATH="$PYTHONHOME/bin:$PATH"
-  fi
-fi
-
-# configure golang.
+# add golang bin paths.
 export PATH="$PATH:/usr/local/go/bin:$HOME/go/bin"
 
+# add bun bin path.
+export PATH="$PATH:$HOME/.bun/bin"
+
+# configure nix.
+[ -f "$HOME/.nix-profile/etc/profile.d/nix.sh" ] && . $HOME/.nix-profile/etc/profile.d/nix.sh
+
 # configure cargo.
-if [ -f "$HOME/.cargo/env" ]; then
-  . "$HOME/.cargo/env"
-fi
+[ -f "$HOME/.cargo/env" ] && . "$HOME/.cargo/env"
 
 # set default terminal.
-if command -v alacritty > /dev/null; then
-  export TERM=alacritty
-fi
+command -v alacritty > /dev/null && export TERM=alacritty
 
 # set default editor.
-if command -v nvim > /dev/null; then
-  export EDITOR=nvim
-fi
+command -v nvim > /dev/null && export EDITOR=nvim
 
 # set default shell.
-if command -v fish > /dev/null; then
-  export SHELL="$(which fish)"
-fi
+command -v fish > /dev/null && export SHELL="$(which fish)"
 
 # :::::::::::::::::::::::::
 # start a new login shell.
