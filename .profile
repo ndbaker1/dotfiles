@@ -6,6 +6,11 @@
 # add user's private and local bin paths.
 export PATH="$HOME/.local/bin:$HOME/bin:$PATH"
 
+# configure nix.
+if [ -e $HOME/.nix-profile/etc/profile.d/nix.sh ]; then
+    . $HOME/.nix-profile/etc/profile.d/nix.sh
+fi
+
 # configure python (via uv).
 if command -v uv > /dev/null; then
   UV_PYTHON_DIR=$(uv python dir)
