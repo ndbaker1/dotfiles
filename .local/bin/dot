@@ -1,35 +1,46 @@
 #!/usr/bin/env sh
 
+# somewhat POSIX bootstrap script.
+
+set -o errexit
+set -o nounset
+
 REPO_URL="https://github.com/ndbaker1/dotfiles"
 DOTFILES_GIT_DIR="$HOME/.dotfiles.git"
 
-dotfiles() {
-  git --git-dir=$HOME/.dotfiles.git/ --work-tree=$HOME $@
+git_dotfiles() {
+  git --git-dir=$DOTFILES_GIT_DIR --work-tree=$HOME $@
 }
 
-# if not installed then prompt for install
+ask() {
+  printf "$1" >&2
+  read confirm < /dev/tty
+  printf "%s" "$confirm"
+}
+
+# if not installed then prompt for install.
 if ! [ -d $DOTFILES_GIT_DIR ] ; then
-  read -p "pull dotfiles from $REPO_URL (y/n)? " CONT
-  if [ "$CONT" = "y" ] ; then 
-    # clone the bare repo and use the home directory as the worktree
+  if [ "$(ask "pull dotfiles from $REPO_URL (y/n)? ")" = "y" ] ; then 
+    # clone the bare repo and use the home directory as the worktree.
     git clone --bare $REPO_URL $DOTFILES_GIT_DIR
 
-    # dont show untracked files,
-    # let the user add files to the dotfiles selectively without being bothered
-    dotfiles config --local status.showUntrackedFiles no
-    
-    # if the checkout failed, then try to reset the repo to the head pointer
-    # as a correctness fallback
-    if ! dotfiles checkout ; then
-      read -p "failed to checkout. reset head [git reset --hard] (y/n)? " CONT
-      [ "$CONT" = "y" ] && dotfiles reset --hard
+    # dont show untracked files, let the user add files to the dotfiles
+    # selectively without being bothered.
+    git_dotfiles config --local status.showUntrackedFiles no
+
+    # if the checkout failed, then try to reset the repo to the head pointer as
+    # a correctness fallback.
+    if ! git_dotfiles checkout ; then
+      if [ "$(ask "failed to checkout. reset head [git reset --hard] (y/n)? ")" = "y" ] ; then
+        git_dotfiles reset --hard
+      fi
     fi
 
-    echo Done.
-    echo Use \"dot\" to invoke \"git\" from the dotfiles context.
+    printf "Done.\n"
+    printf "Use 'dot' to invoke 'git' from the dotfiles context.\n"
+  else
+    printf "Aborted.\n"
   fi
 else
-  dotfiles $@
+  git_dotfiles $@
 fi
-
-
