@@ -13,7 +13,9 @@
   "permissions": {
     "allow": [
       "WebSearch",
-      "WebFetch(domain*)",
+      "WebFetch",
+      "Read",
+      "Search",
 
       "Bash(pwd)",
 
