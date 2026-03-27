@@ -267,14 +267,14 @@ require('lazy').setup(
             name = 'catppuccin',
             priority = 1000,
             opts = { transparent_background = true },
-            init = function() vim.cmd.colorscheme('catppuccin') end
+            init = function() vim.cmd.colorscheme('catppuccin-mocha') end
         },
 
         -- Fancier statusline
         {
             'nvim-lualine/lualine.nvim',
             dependencies = { 'catppuccin/nvim' },
-            opts = { options = { theme = "catppuccin" } },
+            opts = { options = { theme = "catppuccin-mocha" } },
         },
 
         -- File Tree
@@ -295,10 +295,10 @@ require('lazy').setup(
                 vim.g.loaded_netrwPlugin = 1
             end,
             keys = function()
-                local api = require('nvim-tree.api')
+                local tree = function() return require('nvim-tree.api').tree end
                 return {
-                    { '?',         api.tree.toggle_help },
-                    { '<leader>e', api.tree.open,       desc = 'Open Tree [E]xplorer' }
+                    { '?',         function() tree().toggle_help() end },
+                    { '<leader>e', function() tree().open() end,       desc = 'Open Tree [E]xplorer' }
                 }
             end
         },
