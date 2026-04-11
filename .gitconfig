@@ -7,12 +7,6 @@
 [alias]
 	c = commit
 	s = status
-	lg = log --oneline
-	last = log -1 HEAD
-	# https://stackoverflow.com/a/11688523/472927
-	ss = "!f() { git stash show stash^{/$*} -p; }; f"
-	sa = "!f() { git stash apply stash^{/$*}; }; f"
-	sl = stash list
 [pull]
 	ff = only
 [push]
