@@ -92,12 +92,21 @@ require('lazy').setup(
         {
             'neovim/nvim-lspconfig',
             dependencies = {
-                { 'williamboman/mason.nvim',           opts = { ui = { border = 'rounded' } } },
-                { 'williamboman/mason-lspconfig.nvim', opts = {} }, -- bridges mason to lspconfig.nvim
-                { 'windwp/nvim-autopairs',             opts = {} },
+                'williamboman/mason.nvim',
+                'williamboman/mason-lspconfig.nvim', -- bridges mason to lspconfig.nvim
+                'windwp/nvim-autopairs',
                 'saghen/blink.cmp',
                 'folke/snacks.nvim',
             },
+            config = function()
+                require("mason").setup({
+                    ui = { border = 'rounded' }
+                })
+                require("mason-lspconfig").setup({
+                    -- automatically enable installed servers in 0.12
+                    automatic_enable = true,
+                })
+            end,
             init = function()
                 -- This function gets run when an LSP connects to a particular buffer.
                 vim.api.nvim_create_autocmd('LspAttach', {
@@ -148,16 +157,6 @@ require('lazy').setup(
                         end
                     end
                 })
-
-                -- LSP capabilities to advertise from autocomplete
-                local capabilities = require('blink.cmp').get_lsp_capabilities(vim.lsp.protocol.make_client_capabilities())
-                vim.lsp.config('*', { capabilities = capabilities })
-
-                for _, f in pairs(vim.api.nvim_get_runtime_file('lsp/*.lua', true)) do
-                    -- get last component of file and strip extension
-                    local server_name = vim.fn.fnamemodify(f, ':t:r')
-                    vim.lsp.enable(server_name)
-                end
             end,
         },
 
@@ -282,6 +281,7 @@ require('lazy').setup(
             "nvim-tree/nvim-tree.lua",
             opts = {
                 hijack_cursor = true,
+                hijack_directories = { enable = true },
                 update_focused_file = { enable = true },
                 view = {
                     width = {
@@ -295,10 +295,10 @@ require('lazy').setup(
                 vim.g.loaded_netrwPlugin = 1
             end,
             keys = function()
-                local tree = function() return require('nvim-tree.api').tree end
+                local tree = require('nvim-tree.api').tree
                 return {
-                    { '?',         function() tree().toggle_help() end },
-                    { '<leader>e', function() tree().open() end,       desc = 'Open Tree [E]xplorer' }
+                    { '?',         function() tree.toggle_help() end },
+                    { '<leader>e', function() tree.open() end,       desc = 'Open Tree [E]xplorer' }
                 }
             end
         },

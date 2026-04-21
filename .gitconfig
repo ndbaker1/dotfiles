@@ -19,3 +19,5 @@
 	defaultBranch = main
 [github]
 	user = ndbaker1
+[url "git@github.com:"]
+	insteadOf = https://github.com/
