@@ -7,8 +7,8 @@
 [alias]
 	c = commit
 	s = status
-    # git grep pickaxe w/ diffs.
-    q = log -pG
+	# git grep pickaxe w/ diffs.
+	q = log -pG
 [pull]
 	ff = only
 [push]
