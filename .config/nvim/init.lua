@@ -69,15 +69,19 @@ require('lazy').setup(
         -- Treesitter
         {
             'nvim-treesitter/nvim-treesitter',
-            branch = 'master',
+            -- main branch is required for now w/ nvim >0.12
+            branch = 'main',
             lazy = false,
             build = ':TSUpdate',
             init = function()
-                require('nvim-treesitter.configs').setup({
-                    -- Add languages to be installed here that you want installed for treesitter
-                    ensure_installed = { 'c', 'cpp', 'go', 'lua', 'python', 'rust', 'typescript', 'toml', 'json' },
-                    highlight = { enable = true },
-                    indent = { enable = true },
+                vim.api.nvim_create_autocmd('FileType', {
+                    callback = function()
+                        -- skip treesitter if the buffer does not have a proper filetype.
+                        if vim.bo.filetype == "" then return end
+                        if not vim.treesitter.language.add(vim.bo.filetype) then return end
+                        vim.treesitter.start()
+                        vim.bo.indentexpr = "v:lua.require'nvim-treesitter'.indentexpr()"
+                    end,
                 })
             end
         },
