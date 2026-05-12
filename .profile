@@ -12,6 +12,9 @@ export PATH="$PATH:/usr/local/go/bin:$HOME/go/bin"
 # add bun bin path.
 export PATH="$PATH:$HOME/.bun/bin"
 
+# add n bin path.
+export PATH="$PATH:$HOME/.n/bin"
+
 # configure nix.
 [ -f "$HOME/.nix-profile/etc/profile.d/nix.sh" ] && . $HOME/.nix-profile/etc/profile.d/nix.sh
 
@@ -28,6 +31,10 @@ command -v nvim > /dev/null && export EDITOR=nvim
 command -v fish > /dev/null && export SHELL="$(which fish)"
 
 # :::::::::::::::::::::::::
-# start a new login shell.
+# use a different login shell if interactive.
 
-exec -l "$SHELL"
+if [ -n "$SHELL" ]; then
+    case "$-" in
+        *i*) exec -l "$SHELL" ;;
+    esac
+fi
