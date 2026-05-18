@@ -15,6 +15,9 @@ export PATH="$PATH:$HOME/.bun/bin"
 # add n bin path.
 export PATH="$PATH:$HOME/.n/bin"
 
+# local environment
+[ -f "$HOME/.local/bin/env" ] && . "$HOME/.local/bin/env"
+
 # configure nix.
 [ -f "$HOME/.nix-profile/etc/profile.d/nix.sh" ] && . $HOME/.nix-profile/etc/profile.d/nix.sh
 

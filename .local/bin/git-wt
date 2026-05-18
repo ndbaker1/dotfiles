@@ -1,0 +1,96 @@
+#!/usr/bin/env bash
+# git-wt — throwaway git worktrees under .wt/<random-name>/
+#   git wt                create new worktree from HEAD
+#   git wt <branch>       create/checkout <branch> in new worktree
+#   git wt -s [query]     fzf-pick an existing worktree
+set -euo pipefail
+
+# colors (skip if not a tty or NO_COLOR set)
+if [[ -t 2 && -z ${NO_COLOR:-} ]]; then
+    R=$'\033[0m'; B=$'\033[1m'; D=$'\033[2m'
+    RED=$'\033[31m'; GRN=$'\033[32m'; YEL=$'\033[33m'; CYN=$'\033[36m'; MAG=$'\033[35m'
+else
+    R='' B='' D='' RED='' GRN='' YEL='' CYN='' MAG=''
+fi
+TAG="${B}${MAG}wt${R}"
+say()  { printf '%s %s\n' "$TAG" "$*" >&2; }
+die()  { printf '%s %serror:%s %s\n' "$TAG" "$RED" "$R" "$*" >&2; exit 1; }
+vgit() { printf '%s %s$ git %s%s\n' "$TAG" "$D" "$*" "$R" >&2; command git "$@"; }
+
+# args
+search=0
+case ${1:-} in
+    -s|--search) search=1; shift ;;
+    -h|--help)   sed -n '2,5p' "$0" | sed 's/^# \{0,1\}//'; exit 0 ;;
+    -*)          die "unknown flag: $1" ;;
+esac
+
+root=$(command git rev-parse --show-toplevel 2>/dev/null) || die "not in a git repo"
+
+# generate "word-word-word" from system dict, with hex fallback
+rand_name() {
+    local dict=/usr/share/dict/words
+    if [[ -r $dict ]]; then
+        set +o pipefail  # head closes early -> SIGPIPE upstream
+        LC_ALL=C grep -E '^[a-z]{3,7}$' "$dict" \
+            | awk 'BEGIN{srand()}{print rand()"\t"$0}' \
+            | sort | head -n3 | cut -f2 | paste -sd- -
+        set -o pipefail
+    else
+        printf '%s-%s-%s\n' "$(openssl rand -hex 2)" "$(openssl rand -hex 2)" "$(openssl rand -hex 2)"
+    fi
+}
+
+if (( search )); then
+    command -v fzf >/dev/null || die "fzf required for -s"
+    main=$(command git -C "$root" worktree list --porcelain | awk '/^worktree /{print $2; exit}')
+    list=$(command git -C "$root" worktree list --porcelain | awk -v main="$main" '
+        /^worktree /{w=$2} /^HEAD /{h=substr($2,1,12)} /^branch /{b=$2; sub("refs/heads/","",b)} /^detached/{b="(detached)"}
+        /^$/{if(w&&w!=main)printf "%s\t%s\t%s\n",w,b,h; w=b=h=""}
+        END{if(w&&w!=main)printf "%s\t%s\t%s\n",w,b,h}')
+    [[ -n $list ]] || die "no other worktrees"
+    pick=$(printf '%s\n' "$list" | fzf --query="${1:-}" --select-1 --exit-0 \
+        --delimiter=$'\t' --with-nth=1,2,3 \
+        --preview="git -C {1} log --oneline --decorate --color=always -n 20" \
+        --preview-window=right:60%:wrap --prompt="worktree> ") || exit 1
+    wt_dir=${pick%%$'\t'*}
+    say "entering ${CYN}${wt_dir}${R}"
+else
+    wt_dir="$root/.wt/$(rand_name)"
+    mkdir -p "$root/.wt"
+    if [[ $# -ge 1 ]]; then
+        if command git -C "$root" show-ref --verify --quiet "refs/heads/$1"; then
+            vgit -C "$root" worktree add "$wt_dir" "$1"
+        else
+            vgit -C "$root" worktree add -b "$1" "$wt_dir"
+        fi
+    else
+        vgit -C "$root" worktree add "$wt_dir"
+    fi
+    say "created ${CYN}${wt_dir}${R} ${D}(exit to clean up)${R}"
+fi
+
+# spawn shell; capture exit but don't propagate
+set +e
+(cd "$wt_dir" && exec "${SHELL:-/bin/bash}")
+status=$?
+set -e
+echo
+
+if [[ ! -d $wt_dir ]]; then
+    vgit -C "$root" worktree prune
+    exit 0
+fi
+
+(( status == 0 )) && say "shell exited" || say "${YEL}shell exited (status $status)${R}"
+
+printf '%s remove %s%s%s? %s[y/N]%s ' "$TAG" "$CYN" "$wt_dir" "$R" "$B" "$R" > /dev/tty
+read -r ans < /dev/tty || ans=
+case $ans in
+    y|Y|yes|YES)
+        vgit -C "$root" worktree remove --force "$wt_dir"
+        rmdir "$root/.wt" 2>/dev/null || true
+        say "${GRN}removed${R}"
+        ;;
+    *) say "kept ${D}(git -C $root worktree remove $wt_dir)${R}" ;;
+esac
