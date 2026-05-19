@@ -56,7 +56,8 @@ if (( search )); then
     wt_dir=${pick%%$'\t'*}
     say "entering ${CYN}${wt_dir}${R}"
 else
-    wt_dir="$root/.wt/$(rand_name)"
+    prefix=${GIT_WT_PREFIX-wt-}
+    wt_dir="$root/.wt/${prefix}$(rand_name)"
     mkdir -p "$root/.wt"
     if [[ $# -ge 1 ]]; then
         if command git -C "$root" show-ref --verify --quiet "refs/heads/$1"; then
