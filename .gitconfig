@@ -2,22 +2,23 @@
 	email = ndbaker1@outlook.com
 	name = Nick Baker
 [core]
-	autocrlf = input
-	safecrlf = true
+    autocrlf = input
+    safecrlf = true
 [alias]
-	c = commit
-	s = status
-	# git grep pickaxe w/ diffs.
-	q = log -pG
+    c = commit
+    s = status
+    # git grep pickaxe w/ diffs.
+    q = log -pG
+    logg = log --stat -p
 [pull]
-	ff = only
+    ff = only
 [push]
-	default = simple
+    default = simple
 [help]
-	autocorrect = 1
+    autocorrect = 1
 [init]
-	defaultBranch = main
+    defaultBranch = main
 [github]
-	user = ndbaker1
+    user = ndbaker1
 [url "git@github.com:"]
-	insteadOf = https://github.com/
+    insteadOf = https://github.com/

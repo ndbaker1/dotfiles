@@ -102,7 +102,7 @@ require('lazy').setup(
             dependencies = {
                 'williamboman/mason.nvim',
                 'williamboman/mason-lspconfig.nvim', -- bridges mason to lspconfig.nvim
-                'windwp/nvim-autopairs',
+                { 'windwp/nvim-autopairs', opts = {} },
                 'saghen/blink.cmp',
                 'folke/snacks.nvim',
             },
@@ -212,6 +212,7 @@ require('lazy').setup(
                 -- swap the default nvim notifier with snacks.
                 notifier = { enabled = true },
                 picker = {
+                    hidden = true,
                     enabled = true,
                     layout = {
                         layout = {
