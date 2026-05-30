@@ -1,7 +1,10 @@
 #!/usr/bin/env sh
 
-# :::::::::::::::::::::::::
+# ::::::::::::::::::::::::::::::
 # POSIX compliant shell setup.
+# ::::::::::::::::::::::::::::::
+
+# ::: unconditional paths.
 
 # add user's private and local bin paths.
 export PATH="$HOME/.local/bin:$HOME/bin:$PATH"
@@ -15,7 +18,9 @@ export PATH="$PATH:$HOME/.bun/bin"
 # add n bin path.
 export PATH="$PATH:$HOME/.n/bin"
 
-# local environment
+# ::: conditional paths.
+
+# local environment.
 [ -f "$HOME/.local/bin/env" ] && . "$HOME/.local/bin/env"
 
 # configure nix.
@@ -23,6 +28,11 @@ export PATH="$PATH:$HOME/.n/bin"
 
 # configure cargo.
 [ -f "$HOME/.cargo/env" ] && . "$HOME/.cargo/env"
+
+# ::: conditional binaries.
+
+# utilize my nix env before proceeding if applicable.
+command -v nix > /dev/null && export PATH="$(nix develop github:ndbaker1/dotfiles -c printenv PATH)"
 
 # set default terminal.
 command -v alacritty > /dev/null && export TERM=alacritty
@@ -33,8 +43,7 @@ command -v nvim > /dev/null && export EDITOR=nvim
 # set default shell.
 command -v fish > /dev/null && export SHELL="$(which fish)"
 
-# :::::::::::::::::::::::::
-# use a different login shell if interactive.
+# ::: use a different login shell if interactive.
 
 if [ -n "$SHELL" ]; then
     case "$-" in
