@@ -23,7 +23,8 @@ export PATH="$PATH:$HOME/.n/bin"
 # local environment.
 [ -f "$HOME/.local/bin/env" ] && . "$HOME/.local/bin/env"
 
-# configure nix.
+# configure nix (multi-user, then single-user).
+[ -f "/etc/profile.d/nix.sh" ] && . /etc/profile.d/nix.sh
 [ -f "$HOME/.nix-profile/etc/profile.d/nix.sh" ] && . $HOME/.nix-profile/etc/profile.d/nix.sh
 
 # configure cargo.
