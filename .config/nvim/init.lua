@@ -213,7 +213,13 @@ require('lazy').setup(
                 notifier = { enabled = true },
                 picker = {
                     hidden = true,
-                    enabled = true,
+                    ignored = false,
+                    sources = {
+                        files = {
+                            hidden = true,
+                            ignored = false,
+                        },
+                    },
                     layout = {
                         layout = {
                             box = "vertical",
