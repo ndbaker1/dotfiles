@@ -8,5 +8,5 @@ curl -fsSL https://raw.githubusercontent.com/ndbaker1/dotfiles/main/.local/bin/d
 ## 💥 tooling
 
 ```sh
-nix develop github:ndbaker1/dotfiles -c fish
+nix profile install github:ndbaker1/dotfiles
 ```

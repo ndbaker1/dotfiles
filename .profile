@@ -32,9 +32,6 @@ export PATH="$PATH:$HOME/.n/bin"
 
 # ::: conditional binaries.
 
-# utilize my nix env before proceeding if applicable.
-command -v nix > /dev/null && export PATH="$(nix develop github:ndbaker1/dotfiles -c printenv PATH)"
-
 # set default terminal.
 command -v alacritty > /dev/null && export TERM=alacritty
 
