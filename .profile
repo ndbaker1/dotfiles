@@ -4,6 +4,9 @@
 # POSIX compliant shell setup.
 # ::::::::::::::::::::::::::::::
 
+# local shell setup.
+[ -f "$HOME/.profile.local" ] && . "$HOME/.profile.local"
+
 # ::: unconditional paths.
 
 # add user's private and local bin paths.
