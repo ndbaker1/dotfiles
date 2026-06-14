@@ -1,0 +1,5 @@
+k9s:
+  ui:
+    skin: catppuccin-mocha-transparent
+    enableMouse: true
+    headless: true

@@ -5,6 +5,8 @@ if status is-interactive
 
   export KUBECONFIG="$KUBECONFIG:.kube/config:$HOME/.kube/config"
 
+  export K9S_CONFIG_DIR="$HOME/.config/k9s"
+
   # ::::::::::::::::::
   # setup kubernetes tooling abbreviations
 
