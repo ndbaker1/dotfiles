@@ -1,5 +1,8 @@
 # git worktree container for https://github.com/ndbaker1/dotfiles/blob/5628aa382f52cc9d0074d91be9fbbdb50edb3581/.local/bin/git-wt
 **/.wt
 
-# claude code
+# claude code.
 **/.claude
+
+# direnv hidden state.
+**/.direnv
