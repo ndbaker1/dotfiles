@@ -1,7 +1,7 @@
 {
   description = "dev";
   inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
+    nixpkgs.url = "github:NixOS/nixpkgs/4100e830e085863741bc69b156ec4ccd53ab5be0";
   };
   outputs =
     { self, nixpkgs }:
@@ -18,6 +18,7 @@
         pkgs.tmux
         pkgs.neovim
         pkgs.fzf
+        pkgs.ripgrep
       ];
     in
     {
