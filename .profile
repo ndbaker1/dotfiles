@@ -35,9 +35,6 @@ export PATH="$PATH:$HOME/.n/bin"
 
 # ::: conditional binaries.
 
-# direnv hook.
-command -v direnv > /dev/null && eval "$(direnv hook bash)"
-
 # set default terminal.
 command -v alacritty > /dev/null && export TERM=alacritty
 

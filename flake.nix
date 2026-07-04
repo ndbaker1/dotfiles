@@ -19,7 +19,6 @@
         pkgs.neovim
         pkgs.fzf
         pkgs.ripgrep
-        pkgs.direnv
       ];
     in
     {
