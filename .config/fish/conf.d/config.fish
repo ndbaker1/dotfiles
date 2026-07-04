@@ -59,6 +59,13 @@ if status is-interactive
   end
 
   # ::::::::::::::::::
+  # direnv for making picking up development faster
+
+  if command -v direnv &> /dev/null
+    direnv hook fish | source
+  end
+
+  # ::::::::::::::::::
   # amend the fish prompt
 
   functions --copy fish_prompt fish_prompt_original
