@@ -1,0 +1,198 @@
+#!/usr/bin/env bash
+
+# ka - open a shell scoped to a selected Kubernetes context.
+#
+# Each shell gets a freshly generated kubeconfig. Generated kubeconfigs can be
+# removed with `ka prune <duration>`.
+
+set -o nounset
+set -o errexit
+set -o pipefail
+
+config_dir="${KA_CONFIG_DIR:-${TMPDIR:-/tmp}/ka-$(id -u)}"
+
+usage() {
+    cat <<'EOF'
+usage:
+  ka
+  ka prune <duration>
+
+Open a shell using a freshly generated kubeconfig, or remove generated
+kubeconfigs whose modification time is older than the given duration.
+
+Durations are positive integers followed by one of:
+  s  seconds
+  m  minutes
+  h  hours
+  d  days
+  w  weeks
+
+Examples:
+  ka prune 30m
+  ka prune 24h
+  ka prune 7d
+EOF
+}
+
+create_config_dir() {
+    mkdir -p "$config_dir"
+    chmod 700 "$config_dir"
+}
+
+duration_in_seconds() {
+    local duration=$1
+
+    [[ $duration =~ ^([1-9][0-9]*)([smhdw])$ ]] || return 1
+
+    local amount=${BASH_REMATCH[1]}
+    local unit
+
+    case ${BASH_REMATCH[2]} in
+        s) unit=1 ;;
+        m) unit=60 ;;
+        h) unit=3600 ;;
+        d) unit=86400 ;;
+        w) unit=604800 ;;
+    esac
+
+    echo $((10#$amount * unit))
+}
+
+prune_configs() {
+    local duration=${1:-}
+    local max_age
+
+    if [[ $# -ne 1 ]] || ! max_age=$(duration_in_seconds "$duration"); then
+        usage >&2
+        return 2
+    fi
+
+    create_config_dir
+
+    local cutoff=$(($(date +%s) - max_age))
+    local pruned=0
+    local config modified
+
+    for config in "$config_dir"/*.kubeconfig; do
+        [[ -f $config ]] || continue
+
+        modified=$(stat -f %m "$config")
+        ((modified < cutoff)) || continue
+
+        rm -- "$config"
+        echo "ka: pruned $config" >&2
+        pruned=$((pruned + 1))
+    done
+
+    echo "ka: pruned $pruned kubeconfig(s) older than $duration" >&2
+}
+
+configs=()
+seen_configs=:
+
+add_config() {
+    local config
+
+    config=$(realpath -q "$1" 2>/dev/null) || return 0
+    [[ -f $config && $seen_configs != *":$config:"* ]] || return 0
+
+    seen_configs="${seen_configs}${config}:"
+    configs+=("$config")
+}
+
+collect_configs() {
+    local original_ifs=$IFS
+    local path
+
+    IFS=:
+    for path in ${KUBECONFIG:-}; do
+        add_config "$path"
+    done
+    IFS=$original_ifs
+
+    add_config "$HOME/.kube/config"
+    for path in \
+        "$HOME"/.kube/*.yaml \
+        "$HOME"/.kube/*.yml \
+        "$HOME"/.kube/configs/*
+    do
+        add_config "$path"
+    done
+
+    if [[ ${#configs[@]} -eq 0 ]]; then
+        echo "ka: no kubeconfig files found" >&2
+        return 1
+    fi
+}
+
+context_menu() {
+    local config context
+
+    for config in "${configs[@]}"; do
+        KUBECONFIG=$config kubectl config get-contexts -o name 2>/dev/null |
+            while IFS= read -r context; do
+                printf '%s\t%s\n' "$context" "$config"
+            done
+    done
+}
+
+open_context_shell() {
+    collect_configs
+
+    local choice
+    choice=$(
+        context_menu |
+            fzf \
+                --delimiter '\t' \
+                --with-nth 1 \
+                --nth 1 \
+                --prompt 'kube> ' \
+                --height 50% \
+                --reverse \
+                --preview 'echo "source: {2}"' \
+                --preview-window down,1
+    ) || exit 130
+
+    local context source
+    IFS=$'\t' read -r context source <<<"$choice"
+
+    create_config_dir
+
+    local timestamp
+    local safe_context
+    local generated_config
+    timestamp=$(date -u +%Y%m%dT%H%M%SZ)
+    safe_context=${context//[^A-Za-z0-9_.@-]/_}
+    generated_config="$config_dir/${safe_context}-${timestamp}-$$.kubeconfig"
+
+    KUBECONFIG=$source kubectl config view \
+        --flatten \
+        --minify \
+        --context="$context" \
+        >"$generated_config"
+    chmod 600 "$generated_config"
+
+    export KUBECONFIG=$generated_config
+    export KA_CONTEXT=$context
+
+    echo "ka: context '$context' -> $generated_config (exit shell to leave)" >&2
+    exec "${SHELL:-/bin/bash}"
+}
+
+case ${1:-} in
+    -h|--help)
+        [[ $# -eq 1 ]] || { usage >&2; exit 2; }
+        usage
+        ;;
+    prune)
+        shift
+        prune_configs "$@"
+        ;;
+    "")
+        open_context_shell
+        ;;
+    *)
+        usage >&2
+        exit 2
+        ;;
+esac
