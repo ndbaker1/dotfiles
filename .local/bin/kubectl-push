@@ -5,27 +5,32 @@ set -o nounset
 set -o pipefail
 
 function get_image() {
-    local image_ref=$(docker images --filter dangling=false --format "table {{.Repository}}:{{.Tag}}\t{{.ID}}\t{{.CreatedSince}}\t{{.Size}}" | grep -v 'localhost' | tail -n+2 | fzf --prompt 'select image: ' | cut -d' ' -f1)
-    [ -z "${image_ref}" ] && exit 1
-    echo ${image_ref} 1>&2
+    local image_ref=$(docker images --filter dangling=false --format "table {{.Repository}}:{{.Tag}}\t{{.ID}}\t{{.CreatedSince}}\t{{.Size}}" | tail -n+2 | fzf --prompt 'select image: ' | cut -d' ' -f1)
     echo ${image_ref}
 }
 
 function get_node() {
     local node=$(kubectl get nodes -o name | fzf --prompt 'select nodes: ' | cut -d'/' -f2)
-    [ -z "${node}" ] && exit 1
     echo ${node}
 }
 
 function push() {
     local image_ref=${1:-$(get_image)}
-    local node=${2:-$(get_node)}
-    local port=${3:-5000}
-    
-    local pod="kubectl-node-push"
-    local namespace="default"
+    [ -n "${image_ref}" ] || exit 1
 
-    # cleanup the pod from previous run
+    local node=${2:-$(get_node)}
+    [ -n "${node}" ] || exit 1
+
+    # unique port so that we can push images to several nodes in parallel.
+    local port=${3:-5$(shuf -i 100-999 -n 1)}
+    
+    # generate pod name from node.
+    local pod="kubectl-push-node-${node}"
+    local namespace=${NAMESPACE:-"default"}
+
+    echo "command: $0 ${image_ref} ${node}"
+
+    # cleanup the pod from previous run.
     kubectl delete pod/${pod} --ignore-not-found
     
     # creating registry shim pod on node.
@@ -69,12 +74,15 @@ EOF
     # give port-forward a moment to establish.
     sleep 2
 
-    # NOTE: docker treats localhost as an "insecure registry" by default, so no TLS
-    # config is needed to push images.
-    docker tag "${image_ref}" "localhost:${port}/${image_ref}"
-    docker push "localhost:${port}/${image_ref}"
+    # set the registry to go through the port forward.
+    local push_ref="localhost:${port}/${image_ref}"
+    docker tag "${image_ref}" "${push_ref}"
+    # NOTE: docker treats localhost as an "insecure registry" by default, so no
+    # TLS config is needed to push images.
+    docker push "${push_ref}"
+    docker rmi "${push_ref}"
     
-    # cleaning up the pods and forwarding process.
+    # clean up the pod and forwarding process.
     kill ${port_forward_pid}
     kubectl delete pod/${pod}
 }
