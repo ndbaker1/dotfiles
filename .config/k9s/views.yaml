@@ -1,0 +1,11 @@
+views:
+  v1/nodes:
+    columns:
+      - NAME
+      - STATUS
+      - TAINTS
+      - VERSION
+      - 'INSTANCE-TYPE:.metadata.labels.node\.kubernetes\.io/instance-type'
+      - RUNTIME:.status.nodeInfo.containerRuntimeVersion
+      - PODS
+      - AGE
