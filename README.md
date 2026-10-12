@@ -8,5 +8,8 @@ curl -fsSL https://raw.githubusercontent.com/ndbaker1/dotfiles/main/.local/bin/d
 ## 💥 tooling
 
 ```sh
-nix profile install github:ndbaker1/dotfiles
+# remote
+nix profile add "github:ndbaker1/dotfiles?dir=.config/nix-profile"
+# local
+nix profile add .config/nix-profile
 ```
