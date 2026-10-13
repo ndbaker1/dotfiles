@@ -15,11 +15,12 @@
       let
         pkgs = nixpkgs.legacyPackages.${system};
         packagesFor = [
+          pkgs.eza
           pkgs.fish
-          pkgs.tmux
-          pkgs.neovim
           pkgs.fzf
+          pkgs.neovim
           pkgs.ripgrep
+          pkgs.tmux
         ];
       in
       {
