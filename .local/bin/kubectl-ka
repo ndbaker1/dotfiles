@@ -1,0 +1,154 @@
+#!/usr/bin/env bash
+
+# kubectl-ka - open a shell scoped to a selected Kubernetes context.
+#
+# Each shell gets a freshly generated kubeconfig. Pass a context name to skip
+# the interactive picker.
+
+set -o nounset
+set -o errexit
+set -o pipefail
+
+config_dir="${KA_CONFIG_DIR:-${TMPDIR:-/tmp}/ka-$(id -u)}"
+
+usage() {
+    cat <<'EOF'
+usage:
+  kubectl ka
+  kubectl ka <context-name>
+
+Open a shell using a freshly generated kubeconfig. Without a context name,
+select one interactively. With a context name, use an exact match.
+EOF
+}
+
+create_config_dir() {
+    mkdir -p "$config_dir"
+    chmod 700 "$config_dir"
+}
+
+error() {
+    printf '\033[1;31mka:\033[0m %s\n' "$*" >&2
+}
+
+configs=()
+seen_configs=:
+
+add_config() {
+    local config
+
+    config=$(realpath -q "$1" 2>/dev/null) || return 0
+    [[ -f $config && $seen_configs != *":$config:"* ]] || return 0
+
+    seen_configs="${seen_configs}${config}:"
+    configs+=("$config")
+}
+
+collect_configs() {
+    local original_ifs=$IFS
+    local path
+
+    IFS=:
+    for path in ${KUBECONFIG:-}; do
+        add_config "$path"
+    done
+    IFS=$original_ifs
+
+    add_config "$HOME/.kube/config"
+    for path in \
+        "$HOME"/.kube/*.yaml \
+        "$HOME"/.kube/*.yml \
+        "$HOME"/.kube/configs/*
+    do
+        add_config "$path"
+    done
+
+    if [[ ${#configs[@]} -eq 0 ]]; then
+        error "no kubeconfig files found"
+        return 1
+    fi
+}
+
+context_menu() {
+    local config context
+
+    for config in "${configs[@]}"; do
+        KUBECONFIG=$config kubectl config get-contexts -o name 2>/dev/null |
+            while IFS= read -r context; do
+                printf '%s\t%s\n' "$context" "$config"
+            done
+    done
+}
+
+open_context_shell() {
+    collect_configs
+
+    local choice=""
+    if [[ $# -eq 0 ]]; then
+        choice=$(
+            context_menu |
+                fzf \
+                    --delimiter '\t' \
+                    --with-nth 1 \
+                    --nth 1 \
+                    --prompt 'kube> ' \
+                    --height 50% \
+                    --reverse \
+                    --preview 'echo "source: {2}"' \
+                    --preview-window down,1
+        ) || exit 130
+    else
+        local menu candidate candidate_source
+        menu=$(context_menu)
+        while IFS=$'\t' read -r candidate candidate_source; do
+            [[ $candidate == "$1" ]] || continue
+            choice="$candidate"$'\t'"$candidate_source"
+            break
+        done <<<"$menu"
+
+        if [[ -z $choice ]]; then
+            error "context '$1' not found"
+            return 1
+        fi
+    fi
+
+    local context source
+    IFS=$'\t' read -r context source <<<"$choice"
+
+    create_config_dir
+
+    local timestamp
+    local safe_context
+    local generated_config
+    timestamp=$(date -u +%Y%m%dT%H%M%SZ)
+    safe_context=${context//[^A-Za-z0-9_.@-]/_}
+    generated_config="$config_dir/${safe_context}-${timestamp}-$$.kubeconfig"
+
+    KUBECONFIG=$source kubectl config view \
+        --flatten \
+        --minify \
+        --context="$context" \
+        >"$generated_config"
+    chmod 600 "$generated_config"
+
+    export KUBECONFIG=$generated_config
+    export KA_CONTEXT=$context
+
+    echo "ka: context '$context' -> $generated_config (exit shell to leave)" >&2
+    exec "${SHELL:-/bin/bash}"
+}
+
+if [[ $# -gt 1 ]]; then
+    error "expected at most one context name"
+    usage >&2
+    exit 2
+fi
+
+case ${1:-} in
+    -h|--help)
+        usage
+        ;;
+    *)
+        open_context_shell "$@"
+        ;;
+esac
