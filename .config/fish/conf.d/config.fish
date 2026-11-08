@@ -59,16 +59,24 @@ if status is-interactive
   end
 
   # ::::::::::::::::::
-  # amend the fish prompt
+  # setup fish prompt hooks
 
   functions --copy fish_prompt fish_prompt_original
 
   function fish_prompt
-    if test $SHLVL -gt 1
-      set_color blue; echo -n "($SHLVL) "; set_color normal;
-    end
-
+    set -g _fish_prompt_buffer ""
+    emit pre_hook_fish_prompt_build
+    echo -n $_fish_prompt_buffer
     fish_prompt_original
+    set -g _fish_prompt_buffer ""
+    emit post_hook_fish_prompt_build
+    echo -n $_fish_prompt_buffer
+  end
+
+  function _prompt_shell_level --on-event pre_hook_fish_prompt_build
+    if test $SHLVL -gt 1
+      set -g _fish_prompt_buffer "$_fish_prompt_buffer"(set_color blue)"($SHLVL) "(set_color normal)
+    end
   end
 
 end

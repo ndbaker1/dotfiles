@@ -12,15 +12,11 @@ if status is-interactive
 
   if command -v kubectl &> /dev/null
     abbr -a k 'kubectl'
-    
-    # TODO: i like this but i need to stardardize fish prompts better.
-    function fish_prompt
-        fish_prompt_original
-        if kubectl config current-context &> /dev/null
-            set_color FFBBBA
-            printf "%s" "(☁︎  $(kubectl config current-context))> "
-            set_color normal
-        end
+
+    function _prompt_kube --on-event pre_hook_fish_prompt_build
+      if kubectl config current-context &> /dev/null
+        set -g _fish_prompt_buffer "$_fish_prompt_buffer"(set_color FFBBBA)"($(kubectl config current-context))> "(set_color normal)
+      end
     end
 
     if command -v kubecolor &> /dev/null
