@@ -1,12 +1,14 @@
 {
   description = "dev";
   inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs/4100e830e085863741bc69b156ec4ccd53ab5be0";
-    flake-utils.url = "github:numtide/flake-utils/11707dc2f618dd54ca8739b309ec4fc024de578b";
+    nixpkgs.url = "github:NixOS/nixpkgs";
+    flake-utils.url = "github:numtide/flake-utils";
+    eza.url = "github:eza-community/eza";
   };
   outputs =
     {
       self,
+      eza,
       nixpkgs,
       flake-utils,
     }:
@@ -15,7 +17,7 @@
       let
         pkgs = nixpkgs.legacyPackages.${system};
         packagesFor = [
-          pkgs.eza
+          eza.packages.${system}.default
           pkgs.fish
           pkgs.fzf
           pkgs.neovim
@@ -31,6 +33,7 @@
         devShells.default = pkgs.mkShell {
           packages = packagesFor;
         };
+        formatter = pkgs.nixfmt;
       }
     );
 }
